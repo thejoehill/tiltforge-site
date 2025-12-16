@@ -3,11 +3,21 @@ import Button from "@/components/ui/button"
 export default function Hero() {
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center px-6 py-20 overflow-hidden">
-      {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-muted opacity-40" />
+      <div className="absolute inset-0 bg-background" />
 
-      <div className="relative z-10 max-w-4xl mx-auto text-center">
-        <h1 className="text-5xl md:text-7xl font-bold text-balance leading-tight mb-6">
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(ellipse 900px 700px at center top 35%, rgba(0,152,255,0.2) 0%, rgba(26,28,30,0.2) 20%, rgba(26,28,30,0.6) 50%, rgba(0,0,0,1) 100%)`,
+        }}
+      />
+
+      <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center">
+        <div className="mb-16 flex justify-center w-full px-5">
+          <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/tiltForge%20logo%20dark-2Re7fY8aYvO7z3WUd7jbJWeu8NxIao.png" alt="TiltForge Logo" className="w-[95%] h-auto drop-shadow-2xl" />
+        </div>
+
+        <h1 className="text-5xl md:text-7xl font-bold text-balance leading-tight mb-6 text-foreground">
           Smart Blinds.
           <br />
           <span className="text-primary">Repairable.</span> Affordable.
