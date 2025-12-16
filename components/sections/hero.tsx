@@ -5,49 +5,55 @@ import Button from "@/components/ui/button"
 
 export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null)
+
   const [scrollY, setScrollY] = useState(0)
   const [mouse, setMouse] = useState({ x: 50, y: 30 })
 
-  /* Track scroll */
+  /* Scroll tracking */
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY)
-    window.addEventListener("scroll", onScroll)
+    window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  /* Track mouse for spotlight parallax */
+  /* Mouse tracking (scoped) */
   useEffect(() => {
+    const el = heroRef.current
+    if (!el) return
+
+    const clamp = (v: number) => Math.max(0, Math.min(100, v))
+
     const onMove = (e: MouseEvent) => {
-      if (!heroRef.current) return
-      const rect = heroRef.current.getBoundingClientRect()
+      const rect = el.getBoundingClientRect()
       setMouse({
-        x: ((e.clientX - rect.left) / rect.width) * 100,
-        y: ((e.clientY - rect.top) / rect.height) * 100,
+        x: clamp(((e.clientX - rect.left) / rect.width) * 100),
+        y: clamp(((e.clientY - rect.top) / rect.height) * 100),
       })
     }
-    window.addEventListener("mousemove", onMove)
-    return () => window.removeEventListener("mousemove", onMove)
+
+    el.addEventListener("mousemove", onMove)
+    return () => el.removeEventListener("mousemove", onMove)
   }, [])
 
   /* Derived animation values */
-  const logoScale = Math.max(0.85, 1 - scrollY * 0.0006)
-  const glowOpacity = Math.max(0, 0.35 - scrollY * 0.0009)
+  const logoScale = Math.max(0.78, 1 - scrollY * 0.00035)
+  const glowOpacity = Math.max(0, 0.45 - scrollY * 0.0009)
 
   return (
     <section
       ref={heroRef}
-      className="relative w-full min-h-screen flex items-center justify-center px-6 pt-28 pb-24 overflow-hidden"
+      className="relative w-full min-h-screen flex items-center justify-center px-6 pt-32 pb-28 overflow-hidden"
     >
       {/* Base background */}
       <div className="absolute inset-0 bg-background" />
 
-      {/* Spotlight + glow */}
+      {/* Spotlight */}
       <div className="absolute inset-0 pointer-events-none">
         <div
-          className="absolute rounded-full bg-primary blur-[140px] transition-opacity duration-300"
+          className="absolute rounded-full bg-primary blur-[220px] transition-opacity duration-300"
           style={{
-            width: 480,
-            height: 480,
+            width: 760,
+            height: 760,
             opacity: glowOpacity,
             left: `${mouse.x}%`,
             top: `${mouse.y}%`,
@@ -58,30 +64,36 @@ export default function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center">
-       {/* Logo */}
-<div className="mb-8 flex justify-center">
-  <img
-    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/tiltForge%20logo%20dark-2Re7fY8aYvO7z3WUd7jbJWeu8NxIao.png"
-    alt="TiltForge Logo"
-    className="h-32 md:h-40 w-auto transition-transform duration-300"
-    style={{
-      transform: `scale(${Math.max(0.92, 1 - scrollY * 0.0004)})`,
-      filter: "drop-shadow(0 0 55px rgba(0,152,255,0.35))",
-    }}
-  />
-</div>
-
+      <div className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center">
+        {/* LOGO — BIG, ON PURPOSE */}
+        <div className="mb-14 flex justify-center">
+          <img
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/tiltForge%20logo%20dark-2Re7fY8aYvO7z3WUd7jbJWeu8NxIao.png"
+            alt="TiltForge Logo"
+            className="
+              w-[90vw]
+              max-w-[820px]
+              md:max-w-[900px]
+              lg:max-w-[980px]
+              h-auto
+              transition-transform duration-300
+            "
+            style={{
+              transform: `scale(${logoScale})`,
+              filter: `drop-shadow(0 0 90px rgba(0,152,255,${glowOpacity}))`,
+            }}
+          />
+        </div>
 
         {/* Headline */}
-        <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6 text-foreground">
+        <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-8 text-foreground">
           Smart Blinds.
           <br />
           <span className="text-primary">Repairable.</span> Affordable.
         </h1>
 
         {/* Subheadline */}
-        <p className="text-lg md:text-xl text-secondary max-w-2xl mx-auto mb-10">
+        <p className="text-lg md:text-xl text-secondary max-w-2xl mx-auto mb-12">
           Meet TiltForge — the first smart blind motor powered by a harmonic drive.
           Stronger. Quieter. Open. Designed to last.
         </p>
@@ -89,7 +101,7 @@ export default function Hero() {
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <div className="relative group">
-            <div className="absolute inset-0 rounded-md bg-primary/30 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 rounded-md bg-primary/35 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
             <Button variant="primary" className="relative z-10">
               Get TiltForge
             </Button>
@@ -104,7 +116,7 @@ export default function Hero() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="mt-20">
+        <div className="mt-24">
           <div className="flex flex-col items-center gap-3 animate-bounce">
             <span className="text-sm text-secondary">Scroll to explore</span>
             <svg
