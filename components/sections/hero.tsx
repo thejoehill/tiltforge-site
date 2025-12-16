@@ -59,18 +59,19 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center">
-        {/* Logo */}
-        <div className="mb-10 flex justify-center">
-          <img
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/tiltForge%20logo%20dark-2Re7fY8aYvO7z3WUd7jbJWeu8NxIao.png"
-            alt="TiltForge Logo"
-            className="h-24 md:h-28 w-auto transition-transform duration-300"
-            style={{
-              transform: `scale(${logoScale})`,
-              filter: "drop-shadow(0 0 45px rgba(0,152,255,0.25))",
-            }}
-          />
-        </div>
+       {/* Logo */}
+<div className="mb-8 flex justify-center">
+  <img
+    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/tiltForge%20logo%20dark-2Re7fY8aYvO7z3WUd7jbJWeu8NxIao.png"
+    alt="TiltForge Logo"
+    className="h-32 md:h-40 w-auto transition-transform duration-300"
+    style={{
+      transform: `scale(${Math.max(0.92, 1 - scrollY * 0.0004)})`,
+      filter: "drop-shadow(0 0 55px rgba(0,152,255,0.35))",
+    }}
+  />
+</div>
+
 
         {/* Headline */}
         <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6 text-foreground">
