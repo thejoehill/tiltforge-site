@@ -16,7 +16,7 @@ export default function Hero() {
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  /* Mouse tracking (scoped) */
+  /* Mouse tracking */
   useEffect(() => {
     const el = heroRef.current
     if (!el) return
@@ -35,14 +35,14 @@ export default function Hero() {
     return () => el.removeEventListener("mousemove", onMove)
   }, [])
 
-  /* Derived animation values */
+  /* Animation values */
   const logoScale = Math.max(0.78, 1 - scrollY * 0.00035)
   const glowOpacity = Math.max(0, 0.45 - scrollY * 0.0009)
 
   return (
     <section
       ref={heroRef}
-      className="relative w-full min-h-screen flex items-center justify-center px-6 pt-32 pb-28 overflow-hidden"
+      className="relative w-full min-h-screen flex items-center justify-center px-6 overflow-hidden"
     >
       {/* Base background */}
       <div className="absolute inset-0 bg-background" />
@@ -63,18 +63,24 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center">
-        {/* LOGO — BIG, ON PURPOSE */}
-        <div className="mb-14 flex justify-center">
+      {/* CONTENT */}
+      <div
+        className="
+          relative z-10
+          max-w-5xl mx-auto
+          flex flex-col items-center text-center
+          pt-32
+        "
+      >
+        {/* LOGO ZONE — CENTERED IN ITS OWN SPACE */}
+        <div className="mb-24 flex justify-center w-full">
           <img
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/tiltForge%20logo%20dark-2Re7fY8aYvO7z3WUd7jbJWeu8NxIao.png"
             alt="TiltForge Logo"
             className="
               w-[90vw]
-              max-w-[820px]
-              md:max-w-[900px]
-              lg:max-w-[980px]
+              max-w-[900px]
+              lg:max-w-[1000px]
               h-auto
               transition-transform duration-300
             "
@@ -85,21 +91,21 @@ export default function Hero() {
           />
         </div>
 
-        {/* Headline */}
-        <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-8 text-foreground">
+        {/* HEADLINE */}
+        <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-10 text-foreground">
           Smart Blinds.
           <br />
           <span className="text-primary">Repairable.</span> Affordable.
         </h1>
 
-        {/* Subheadline */}
-        <p className="text-lg md:text-xl text-secondary max-w-2xl mx-auto mb-12">
+        {/* SUBHEAD */}
+        <p className="text-lg md:text-xl text-secondary max-w-2xl mx-auto mb-16">
           Meet TiltForge — the first smart blind motor powered by a harmonic drive.
           Stronger. Quieter. Open. Designed to last.
         </p>
 
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        {/* CTAs — NOW NATURALLY LOWER */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-24">
           <div className="relative group">
             <div className="absolute inset-0 rounded-md bg-primary/35 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
             <Button variant="primary" className="relative z-10">
@@ -115,8 +121,8 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="mt-24">
+        {/* SCROLL INDICATOR — NEAR BOTTOM */}
+        <div className="pb-16">
           <div className="flex flex-col items-center gap-3 animate-bounce">
             <span className="text-sm text-secondary">Scroll to explore</span>
             <svg
