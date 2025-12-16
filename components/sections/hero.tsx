@@ -1,29 +1,60 @@
+"use client"
+
+import { useEffect, useRef, useState } from "react"
 import Button from "@/components/ui/button"
 
 export default function Hero() {
+  const heroRef = useRef<HTMLDivElement>(null)
+  const [scrollY, setScrollY] = useState(0)
+  const [mouse, setMouse] = useState({ x: 50, y: 30 })
+
+  /* Track scroll */
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY)
+    window.addEventListener("scroll", onScroll)
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
+  /* Track mouse for spotlight parallax */
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (!heroRef.current) return
+      const rect = heroRef.current.getBoundingClientRect()
+      setMouse({
+        x: ((e.clientX - rect.left) / rect.width) * 100,
+        y: ((e.clientY - rect.top) / rect.height) * 100,
+      })
+    }
+    window.addEventListener("mousemove", onMove)
+    return () => window.removeEventListener("mousemove", onMove)
+  }, [])
+
+  /* Derived animation values */
+  const logoScale = Math.max(0.85, 1 - scrollY * 0.0006)
+  const glowOpacity = Math.max(0, 0.35 - scrollY * 0.0009)
+
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-center px-6 pt-28 pb-24 overflow-hidden">
+    <section
+      ref={heroRef}
+      className="relative w-full min-h-screen flex items-center justify-center px-6 pt-28 pb-24 overflow-hidden"
+    >
       {/* Base background */}
       <div className="absolute inset-0 bg-background" />
 
-      {/* Spotlight + ambient glow */}
+      {/* Spotlight + glow */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Primary spotlight */}
         <div
-          className="absolute left-1/2 top-[28%]
-                     h-[420px] w-[420px]
-                     -translate-x-1/2 -translate-y-1/2
-                     rounded-full bg-primary/30 blur-[120px]"
+          className="absolute rounded-full bg-primary blur-[140px] transition-opacity duration-300"
+          style={{
+            width: 480,
+            height: 480,
+            opacity: glowOpacity,
+            left: `${mouse.x}%`,
+            top: `${mouse.y}%`,
+            transform: "translate(-50%, -50%)",
+          }}
         />
-
-        {/* Ambient fade */}
-        <div
-          className="absolute inset-0
-                     bg-gradient-to-b
-                     from-transparent
-                     via-black/40
-                     to-black"
-        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black" />
       </div>
 
       {/* Content */}
@@ -33,30 +64,42 @@ export default function Hero() {
           <img
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/tiltForge%20logo%20dark-2Re7fY8aYvO7z3WUd7jbJWeu8NxIao.png"
             alt="TiltForge Logo"
-            className="h-24 md:h-28 w-auto"
+            className="h-24 md:h-28 w-auto transition-transform duration-300"
             style={{
-              filter: "drop-shadow(0 0 40px rgba(0,152,255,0.25))",
+              transform: `scale(${logoScale})`,
+              filter: "drop-shadow(0 0 45px rgba(0,152,255,0.25))",
             }}
           />
         </div>
 
         {/* Headline */}
-        <h1 className="text-5xl md:text-7xl font-bold text-balance leading-tight mb-6 text-foreground">
+        <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6 text-foreground">
           Smart Blinds.
           <br />
           <span className="text-primary">Repairable.</span> Affordable.
         </h1>
 
         {/* Subheadline */}
-        <p className="text-lg md:text-xl text-secondary max-w-2xl mx-auto mb-10 text-balance">
+        <p className="text-lg md:text-xl text-secondary max-w-2xl mx-auto mb-10">
           Meet TiltForge — the first smart blind motor powered by a harmonic drive.
           Stronger. Quieter. Open. Designed to last.
         </p>
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button variant="primary">Get TiltForge</Button>
-          <Button variant="secondary">See How It Works</Button>
+          <div className="relative group">
+            <div className="absolute inset-0 rounded-md bg-primary/30 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Button variant="primary" className="relative z-10">
+              Get TiltForge
+            </Button>
+          </div>
+
+          <div className="relative group">
+            <div className="absolute inset-0 rounded-md bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Button variant="secondary" className="relative z-10">
+              See How It Works
+            </Button>
+          </div>
         </div>
 
         {/* Scroll indicator */}
