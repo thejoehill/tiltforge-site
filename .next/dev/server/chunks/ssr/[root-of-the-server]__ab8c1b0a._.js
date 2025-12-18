@@ -1628,7 +1628,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$fa
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$final$2d$cta$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/sections/final-cta.tsx [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$footer$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/sections/footer.tsx [app-rsc] (ecmascript)");
 (()=>{
-    const e = new Error("Cannot find module '@/components/TestScene'");
+    const e = new Error("Cannot find module '@/components/'");
     e.code = 'MODULE_NOT_FOUND';
     throw e;
 })();
