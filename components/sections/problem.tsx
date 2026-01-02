@@ -1,16 +1,24 @@
 export default function Problem() {
-  const issues = ["Weak gearboxes", "Non-repairable", "Closed ecosystems", "Poor torque", "Loud operation"]
+  const issues = [
+    "Full blind replacement just to add automation",
+    "Disposable motors with no repair path",
+    "Manual control lost when the motor fails",
+    "Closed ecosystems and locked-down firmware",
+    "Designs that ignore how blinds already work",
+  ]
 
   return (
     <section className="w-full px-6 py-20 md:py-32">
       <div className="max-w-5xl mx-auto">
         <div className="mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-balance mb-6">
-            Stop Paying $199 for Blind Motors You Can't Repair.
+            Smart Blinds Shouldn’t Mean Disposable Blinds.
           </h2>
+
           <p className="text-lg text-secondary max-w-2xl">
-            Most smart blind motors are fragile, overpriced, and disposable. When a $0.10 gear strips, the entire $199
-            unit is useless.
+            Most “smart” blind solutions force you to replace perfectly good hardware
+            with sealed motors that can’t be repaired, modified, or even manually used
+            when something goes wrong.
           </p>
         </div>
 
