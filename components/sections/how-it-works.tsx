@@ -1,11 +1,11 @@
 export default function HowItWorks() {
   const specs = [
-    "Wave generator with 22T spur gear",
-    "1–3 start worm options for speed control",
-    "18:1 harmonic drive ratio",
-    "Massive torque in a tiny footprint",
-    "Quiet, fluid rotation",
-    "Zero gear stripping",
+    "Magnetically coupled drive engages the existing tilt spool",
+    "Axial motor rotation mimics the original pull-cord action",
+    "Slip-safe magnetic interface preserves manual control",
+    "No blind replacement or permanent modification required",
+    "Only four 3D-printed structural components",
+    "Built from standard, off-the-shelf hardware",
   ]
 
   return (
@@ -13,8 +13,14 @@ export default function HowItWorks() {
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-4xl md:text-5xl font-bold text-balance mb-8">Smooth, Silent, Strong.</h2>
-            <p className="text-lg text-secondary mb-8">Thanks to engineering that actually makes sense.</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-balance mb-8">
+              Simple. Intentional. Mechanical.
+            </h2>
+
+            <p className="text-lg text-secondary mb-8">
+              TiltForge works by turning the same spool your blinds already use —
+              just automatically, and without breaking anything.
+            </p>
 
             <div className="space-y-4 mb-10">
               {specs.map((spec) => (
@@ -29,17 +35,29 @@ export default function HowItWorks() {
 
             <button className="text-primary font-semibold flex items-center gap-2 hover:gap-3 transition-all">
               See Internal Design
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </button>
           </div>
 
           <div className="relative aspect-square rounded-lg bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 flex items-center justify-center">
             <div className="text-center">
-              <div className="text-6xl mb-4">⚙️</div>
-              <p className="text-secondary">Harmonic Drive Animation</p>
-              <p className="text-xs text-muted mt-2">(Interactive 3D model area)</p>
+              <div className="text-6xl mb-4">🧲⚙️</div>
+              <p className="text-secondary">Magnetic Tilt Rod Drive</p>
+              <p className="text-xs text-muted mt-2">
+                (Interactive exploded-view model)
+              </p>
             </div>
           </div>
         </div>
