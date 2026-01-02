@@ -3,35 +3,55 @@ import Button from "@/components/ui/button"
 export default function ProductTiers() {
   const tiers = [
     {
-      name: "TiltForge Full",
+      name: "TiltForge Assembled",
       price: "$99–$119",
-      description: "A fully assembled, pre-calibrated smart blind motor.",
-      features: ["Includes servo + Tuya board", "Ready to install in minutes"],
-      cta: "Buy Assembled",
+      description:
+        "A fully assembled tilt rod drive, calibrated and ready for early testing.",
+      features: [
+        "Includes motor + control board",
+        "Pre-assembled and bench-tested",
+        "Ideal for non-DIY beta testers",
+      ],
+      cta: "Join Beta",
       highlight: true,
     },
     {
       name: "TiltForge Maker Kit",
       price: "$49–$69",
-      description: "All printed parts + bearings + hardware.",
-      features: ["Optional electronics add-on", "Perfect for DIYers"],
-      cta: "Build Your Own",
+      description:
+        "Printed parts, bearings, and hardware for hands-on builders.",
+      features: [
+        "Bring your own electronics or add later",
+        "Great for tinkerers and modders",
+        "Full mechanical transparency",
+      ],
+      cta: "Build One",
       highlight: false,
     },
     {
       name: "TiltForge Studio (STLs)",
       price: "$20",
-      description: "Print every part yourself.",
-      features: ["Includes lifetime design updates"],
-      cta: "Download STLs",
+      description:
+        "Print and build everything yourself.",
+      features: [
+        "Complete mechanical design files",
+        "Lifetime design revisions included",
+        "For printers, hackers, and labs",
+      ],
+      cta: "Get Files",
       highlight: false,
     },
     {
       name: "Replacement Parts",
       price: "$3–$12",
-      description: "Because repairable devices should actually be repairable.",
-      features: ["Individual component replacements"],
-      cta: "Shop Parts",
+      description:
+        "Because fixing one part should never mean replacing everything.",
+      features: [
+        "Individual component replacements",
+        "No bundles, no forced upgrades",
+        "Designed to stay available",
+      ],
+      cta: "View Parts",
       highlight: false,
     },
   ]
@@ -40,8 +60,12 @@ export default function ProductTiers() {
     <section className="w-full px-6 py-20 md:py-32">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-balance mb-4">Choose How You Build.</h2>
-          <p className="text-lg text-secondary">From fully assembled to DIY kits and replacement parts</p>
+          <h2 className="text-4xl md:text-5xl font-bold text-balance mb-4">
+            Choose How Deep You Want to Go.
+          </h2>
+          <p className="text-lg text-secondary">
+            From ready-to-run units to full DIY builds and replacement parts.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -55,8 +79,12 @@ export default function ProductTiers() {
               }`}
             >
               <h3 className="text-xl font-semibold mb-2">{tier.name}</h3>
-              <p className="text-3xl font-bold text-primary mb-4">{tier.price}</p>
-              <p className="text-sm text-secondary mb-6 flex-grow">{tier.description}</p>
+              <p className="text-3xl font-bold text-primary mb-4">
+                {tier.price}
+              </p>
+              <p className="text-sm text-secondary mb-6 flex-grow">
+                {tier.description}
+              </p>
 
               <ul className="space-y-2 mb-8 text-sm">
                 {tier.features.map((feature) => (
@@ -67,7 +95,10 @@ export default function ProductTiers() {
                 ))}
               </ul>
 
-              <Button variant={tier.highlight ? "primary" : "secondary"} className="w-full">
+              <Button
+                variant={tier.highlight ? "primary" : "secondary"}
+                className="w-full"
+              >
                 {tier.cta}
               </Button>
             </div>
