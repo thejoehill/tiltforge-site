@@ -72,7 +72,7 @@ export default function Hero() {
           pt-32
         "
       >
-        {/* LOGO ZONE — CENTERED IN ITS OWN SPACE */}
+        {/* LOGO */}
         <div className="mb-24 flex justify-center w-full">
           <img
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/tiltForge%20logo%20dark-2Re7fY8aYvO7z3WUd7jbJWeu8NxIao.png"
@@ -95,21 +95,22 @@ export default function Hero() {
         <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-10 text-foreground">
           Smart Blinds.
           <br />
-          <span className="text-primary">Repairable.</span> Affordable.
+          <span className="text-primary">Retrofit.</span> Repairable.
         </h1>
 
         {/* SUBHEAD */}
         <p className="text-lg md:text-xl text-secondary max-w-2xl mx-auto mb-16">
-          Meet TiltForge — the first smart blind motor powered by a harmonic drive.
-          Stronger. Quieter. Open. Designed to last.
+          Meet TiltForge — a magnetically-coupled tilt rod drive that automates your
+          existing blinds without replacing them.
+          Simple hardware. Standard parts. Built to be fixed, not thrown away.
         </p>
 
-        {/* CTAs — NOW NATURALLY LOWER */}
+        {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-24">
           <div className="relative group">
             <div className="absolute inset-0 rounded-md bg-primary/35 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
             <Button variant="primary" className="relative z-10">
-              Get TiltForge
+              Join the Beta
             </Button>
           </div>
 
@@ -121,7 +122,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* SCROLL INDICATOR — NEAR BOTTOM */}
+        {/* SCROLL INDICATOR */}
         <div className="pb-16">
           <div className="flex flex-col items-center gap-3 animate-bounce">
             <span className="text-sm text-secondary">Scroll to explore</span>
