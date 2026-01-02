@@ -8,7 +8,7 @@ export default function Footer() {
             <ul className="space-y-2 text-secondary text-sm">
               <li>
                 <a href="#" className="hover:text-primary transition-colors">
-                  Buy Assembled
+                  Join the Beta
                 </a>
               </li>
               <li>
@@ -18,12 +18,12 @@ export default function Footer() {
               </li>
               <li>
                 <a href="#" className="hover:text-primary transition-colors">
-                  STLs
+                  Design Files (STLs)
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-primary transition-colors">
-                  Parts Shop
+                  Replacement Parts
                 </a>
               </li>
             </ul>
@@ -34,22 +34,17 @@ export default function Footer() {
             <ul className="space-y-2 text-secondary text-sm">
               <li>
                 <a href="#" className="hover:text-primary transition-colors">
-                  About
+                  About TiltForge
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-primary transition-colors">
-                  Blog
+                  Design Philosophy
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-primary transition-colors">
                   Contact
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Careers
                 </a>
               </li>
             </ul>
@@ -60,12 +55,12 @@ export default function Footer() {
             <ul className="space-y-2 text-secondary text-sm">
               <li>
                 <a href="#" className="hover:text-primary transition-colors">
-                  Docs
+                  Installation Guides
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-primary transition-colors">
-                  API
+                  Compatibility Info
                 </a>
               </li>
               <li>
@@ -86,22 +81,17 @@ export default function Footer() {
             <ul className="space-y-2 text-secondary text-sm">
               <li>
                 <a href="#" className="hover:text-primary transition-colors">
-                  Privacy
+                  Privacy Policy
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-primary transition-colors">
-                  Terms
+                  Terms of Use
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-primary transition-colors">
-                  Warranty
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Returns
+                  Warranty & Disclaimers
                 </a>
               </li>
             </ul>
@@ -109,16 +99,20 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between">
-          <p className="text-secondary text-sm">TiltForge © 2025 — Smart Blinds. Repairable. Affordable.</p>
+          <p className="text-secondary text-sm max-w-xl">
+            TiltForge © 2026 — Built to respect the hardware you already own.
+            Designed to be repaired, modified, and understood.
+          </p>
+
           <div className="flex gap-6 mt-6 md:mt-0">
-            <a href="#" className="text-secondary hover:text-primary transition-colors">
-              Twitter
-            </a>
             <a href="#" className="text-secondary hover:text-primary transition-colors">
               GitHub
             </a>
             <a href="#" className="text-secondary hover:text-primary transition-colors">
               Discord
+            </a>
+            <a href="#" className="text-secondary hover:text-primary transition-colors">
+              Updates
             </a>
           </div>
         </div>
