@@ -12,8 +12,10 @@ export const metadata: Metadata = {
   description:
     "Meet TiltForge — the first smart blind motor powered by a harmonic drive. Stronger. Quieter. Open. Designed to last.",
   generator: "v0.app",
+
   icons: {
     icon: [
+      // Light / Dark PNGs
       {
         url: "/icon-light-32x32.png",
         media: "(prefers-color-scheme: light)",
@@ -22,14 +24,27 @@ export const metadata: Metadata = {
         url: "/icon-dark-32x32.png",
         media: "(prefers-color-scheme: dark)",
       },
+
+      // SVG (modern browsers)
       {
         url: "/icon.svg",
         type: "image/svg+xml",
       },
+
+      // ICO fallback (old browsers, Edge weirdness)
+      {
+        url: "/favicon.ico",
+      },
     ],
-    apple: "/apple-icon.png",
+
+    // Apple touch icon
+    apple: "/apple-touch-icon.png",
   },
+
+  // Web app manifest
+  manifest: "/site.webmanifest",
 }
+
 
 export default function RootLayout({
   children,

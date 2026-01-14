@@ -77,6 +77,7 @@ const metadata = {
     generator: "v0.app",
     icons: {
         icon: [
+            // Light / Dark PNGs
             {
                 url: "/icon-light-32x32.png",
                 media: "(prefers-color-scheme: light)"
@@ -85,13 +86,21 @@ const metadata = {
                 url: "/icon-dark-32x32.png",
                 media: "(prefers-color-scheme: dark)"
             },
+            // SVG (modern browsers)
             {
                 url: "/icon.svg",
                 type: "image/svg+xml"
+            },
+            // ICO fallback (old browsers, Edge weirdness)
+            {
+                url: "/favicon.ico"
             }
         ],
-        apple: "/apple-icon.png"
-    }
+        // Apple touch icon
+        apple: "/apple-touch-icon.png"
+    },
+    // Web app manifest
+    manifest: "/site.webmanifest"
 };
 function RootLayout({ children }) {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("html", {
@@ -102,18 +111,18 @@ function RootLayout({ children }) {
                 children,
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$vercel$2f$analytics$2f$dist$2f$next$2f$index$2e$mjs__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["Analytics"], {}, void 0, false, {
                     fileName: "[project]/app/layout.tsx",
-                    lineNumber: 43,
+                    lineNumber: 58,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/layout.tsx",
-            lineNumber: 41,
+            lineNumber: 56,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/layout.tsx",
-        lineNumber: 40,
+        lineNumber: 55,
         columnNumber: 5
     }, this);
 }
