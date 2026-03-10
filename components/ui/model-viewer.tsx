@@ -341,12 +341,8 @@ async function loadTinkercadGLB(THREE: any, url: string, fallbackColor: string, 
           const swapped = new Float32Array(pos.length)
           for (let i = 0; i < pos.length/3; i++) {
             swapped[i*3]   = pos[i*3]         // X unchanged
-            swapped[i*3+1] = pos[i*3+2] - PART_CZ  // Y = oldZ - ZOffset (center on Y=0)
-            swapped[i*3+2] = -pos[i*3+1] + PART_CY  // Z = -oldY + YOffset (center on Z=0... wait, flip)
-          }
-          // Actually center both: subtract the part's Y and Z center after transform
-          // newY = oldZ - PART_CZ → centered at 0
-          // newZ = -oldY - (-PART_CY) = -oldY + PART_CY → centered at 0
+            swapped[i*3+1] = pos[i*3+2] - PART_CY   // newY = oldZ - 0.0172  (centers Y at 0)
+            swapped[i*3+2] = -pos[i*3+1] - PART_CZ  // newZ = -oldY - 0.0784 (centers Z at 0)
           geo.setAttribute("position", new THREE.BufferAttribute(swapped, 3))
         }
 
