@@ -65,7 +65,7 @@ export default function ModelViewer() {
       if (dead) return
       const T = (window as any).THREE
 
-      const W = mountRef.current!.clientWidth, H = 500
+      const W = mountRef.current!.clientWidth, H = 620
       const renderer = new T.WebGLRenderer({ antialias: true, alpha: true })
       renderer.setSize(W, H)
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -211,8 +211,8 @@ export default function ModelViewer() {
       const onResize = () => {
         if (!mountRef.current || !stateRef.current) return
         const W2 = mountRef.current.clientWidth
-        stateRef.current.renderer.setSize(W2, 500)
-        stateRef.current.camera.aspect = W2 / 500
+        stateRef.current.renderer.setSize(W2, 620)
+        stateRef.current.camera.aspect = W2 / 620
         stateRef.current.camera.updateProjectionMatrix()
       }
       window.addEventListener("resize", onResize)
@@ -233,73 +233,115 @@ export default function ModelViewer() {
   }
 
   return (
-    <div className="w-full rounded-xl overflow-hidden border border-border bg-[#080c10] relative select-none" style={{ height: 500 }}>
-      {!ready && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-[#080c10]">
-          <div className="w-48 h-px bg-border mb-4 relative overflow-hidden">
-            <div className="absolute inset-y-0 left-0 bg-primary transition-all duration-200" style={{ width: `${pct}%` }} />
+    <div className="w-full select-none">
+
+      {/* ── Full-width 3D canvas ── */}
+      <div className="w-full rounded-xl overflow-hidden border border-border bg-[#080c10] relative" style={{ height: 620 }}>
+
+        {/* Loading overlay */}
+        {!ready && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-[#080c10]">
+            <div className="w-48 h-px bg-border mb-4 relative overflow-hidden">
+              <div className="absolute inset-y-0 left-0 bg-primary transition-all duration-200" style={{ width: `${pct}%` }} />
+            </div>
+            <p className="text-xs text-muted-foreground font-mono tracking-widest">LOADING {pct}%</p>
+            <p className="text-xs text-muted-foreground/40 mt-1">{PARTS[Math.min(Math.floor(pct/(100/PARTS.length)), PARTS.length-1)]?.label}</p>
           </div>
-          <p className="text-xs text-muted-foreground font-mono tracking-widest">LOADING {pct}%</p>
-          <p className="text-xs text-muted-foreground/40 mt-1">{PARTS[Math.min(Math.floor(pct/(100/PARTS.length)), PARTS.length-1)]?.label}</p>
-        </div>
-      )}
+        )}
 
-      <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
+        <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
 
-      {ready && focused === null && (
-        <p className="absolute bottom-14 left-1/2 -translate-x-1/2 z-10 pointer-events-none text-xs text-white/20 tracking-wide whitespace-nowrap">
-          Drag · Scroll to zoom · Click a part
-        </p>
-      )}
+        {/* Hint */}
+        {ready && active === null && (
+          <p className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 pointer-events-none text-xs text-white/20 tracking-wide whitespace-nowrap">
+            Drag · Scroll to zoom · Click a part
+          </p>
+        )}
 
-      <div className="absolute top-4 left-4 flex gap-2 z-10">
-        {(["assembled","exploded","rotating"] as Mode[]).map(m => (
-          <button key={m} onClick={() => { setMode(m); reset() }}
-            className={`px-3 py-1.5 rounded text-xs font-bold uppercase tracking-widest transition-all ${
-              mode === m ? "bg-primary text-white shadow-lg shadow-primary/30"
-                        : "bg-black/70 border border-white/10 text-white/40 hover:border-primary/40 hover:text-white/80"
-            }`}>{m}</button>
-        ))}
-      </div>
-
-      {mode === "exploded" && ready && (
-        <div className="absolute top-12 right-3 z-10 flex flex-col gap-0.5 max-h-80 overflow-y-auto">
-          {PARTS.map((p, i) => (
-            <button key={i}
-              onMouseEnter={() => setActive(i)}
-              onMouseLeave={() => setActive(focused)}
-              onClick={() => {
-                const nf = focused === i ? null : i
-                setFocused(nf); setActive(nf)
-                if (stateRef.current) {
-                  stateRef.current.orb.tLook.set(nf !== null ? PARTS[i].explX : 0, 0, 0)
-                  stateRef.current.orb.tR = nf !== null ? 3.5 : 10
-                }
-              }}
-              className={`text-left px-2.5 py-1 rounded text-xs whitespace-nowrap flex items-center gap-2 transition-all ${
-                active === i ? "bg-primary/20 text-primary border border-primary/30"
-                  : p.ref     ? "text-white/20 italic hover:text-white/35"
-                  : "text-white/35 hover:text-white/65"
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: p.color, opacity: p.ref ? 0.4 : 1 }} />
-              {p.label}{p.ref && <span className="text-[10px] text-white/20 ml-1">not included</span>}
-            </button>
+        {/* Mode buttons */}
+        <div className="absolute top-4 left-4 flex gap-2 z-10">
+          {(["assembled","exploded","rotating"] as Mode[]).map(m => (
+            <button key={m} onClick={() => { setMode(m); reset() }}
+              className={`px-3 py-1.5 rounded text-xs font-bold uppercase tracking-widest transition-all ${
+                mode === m ? "bg-primary text-white shadow-lg shadow-primary/30"
+                           : "bg-black/70 border border-white/10 text-white/40 hover:border-primary/40 hover:text-white/80"
+              }`}>{m}</button>
           ))}
         </div>
-      )}
+      </div>
 
-      {active !== null && (
-        <div className="absolute bottom-4 left-4 right-28 pointer-events-none z-10">
-          <div className="bg-black/85 border border-primary/20 rounded-lg px-4 py-3 max-w-sm backdrop-blur-sm">
-            <div className="flex items-center gap-2 mb-0.5">
-              <p className="text-sm font-semibold text-primary">{PARTS[active].label}</p>
-              {PARTS[active].ref && <span className="text-[10px] border border-white/15 text-white/35 px-1.5 py-0.5 rounded">NOT INCLUDED</span>}
-            </div>
-            <p className="text-xs text-white/55">{PARTS[active].desc}</p>
+      {/* ── Bottom panel: part list + detail card ── */}
+      <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
+
+        {/* Part list — always visible */}
+        <div className="md:col-span-2 rounded-xl border border-border bg-[#0d1117] p-4">
+          <p className="text-xs text-white/30 font-mono tracking-widest uppercase mb-3">Components</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
+            {PARTS.map((p, i) => (
+              <button key={i}
+                onMouseEnter={() => { if (!focused) setActive(i) }}
+                onMouseLeave={() => { if (!focused) setActive(null) }}
+                onClick={() => {
+                  const nf = focused === i ? null : i
+                  setFocused(nf); setActive(nf)
+                  if (stateRef.current) {
+                    stateRef.current.orb.tLook.set(nf !== null ? (mode === "exploded" ? PARTS[i].explX : toX(PARTS[i].acx)) : 0, 0, 0)
+                    stateRef.current.orb.tR = nf !== null ? 3.5 : 10
+                  }
+                }}
+                className={`text-left px-3 py-2 rounded-lg text-xs flex items-center gap-2 transition-all ${
+                  active === i
+                    ? "bg-primary/15 text-primary border border-primary/30"
+                    : p.ref
+                      ? "text-white/25 hover:text-white/40 border border-transparent hover:border-white/10"
+                      : "text-white/50 hover:text-white/80 border border-transparent hover:border-white/15"
+                }`}
+              >
+                <span className="w-2.5 h-2.5 rounded-full flex-shrink-0 border"
+                  style={{ background: p.color, borderColor: p.ref ? "rgba(255,255,255,0.15)" : "transparent", opacity: p.ref ? 0.5 : 1 }}
+                />
+                <span className="truncate">{p.label}</span>
+                {p.ref && <span className="text-[9px] text-white/20 ml-auto flex-shrink-0">—</span>}
+              </button>
+            ))}
           </div>
         </div>
-      )}
+
+        {/* Detail card */}
+        <div className="rounded-xl border border-border bg-[#0d1117] p-4 flex flex-col justify-between min-h-[140px]">
+          {active !== null ? (
+            <>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="w-3 h-3 rounded-full flex-shrink-0"
+                    style={{ background: PARTS[active].color, opacity: PARTS[active].ref ? 0.5 : 1 }}
+                  />
+                  <p className="text-sm font-semibold text-primary leading-tight">{PARTS[active].label}</p>
+                  {PARTS[active].ref && (
+                    <span className="text-[10px] border border-white/15 text-white/35 px-1.5 py-0.5 rounded ml-auto flex-shrink-0">NOT INCLUDED</span>
+                  )}
+                </div>
+                <p className="text-sm text-white/65 leading-relaxed">{PARTS[active].desc}</p>
+              </div>
+              {focused !== null && (
+                <button onClick={reset}
+                  className="mt-3 text-xs text-white/30 hover:text-white/60 transition-colors text-left">
+                  ← Back to full assembly
+                </button>
+              )}
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full gap-2 text-center">
+              <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center">
+                <svg className="w-4 h-4 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
+                </svg>
+              </div>
+              <p className="text-xs text-white/25">Click any part to see details</p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
