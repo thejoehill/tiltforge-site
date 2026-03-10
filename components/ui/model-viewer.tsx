@@ -89,11 +89,11 @@ export default function ModelViewer() {
 
       // ── Orbit controller ─────────────────────────────────────────────────
       const orb = {
-        th: 0.25, ph: 1.32, r: 10,
-        tTh: 0.25, tPh: 1.32, tR: 10,
+        th: 0.4, ph: 1.15, r: 10,
+        tTh: 0.4, tPh: 1.15, tR: 10,
         drag: false, moved: false, lx: 0, ly: 0,
         look: new T.Vector3(), tLook: new T.Vector3(),
-        autoTh: 0.25,
+        autoTh: 0.4,
       }
       const cv = renderer.domElement
       const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v))
