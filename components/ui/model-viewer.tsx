@@ -167,18 +167,18 @@ export default function ModelViewer() {
       setPct(15)
 
       // ── Load individual parts (for exploded mode) ─────────────────────────
-      const meshes: any[] = [], curX: number[] = [], curScale: number[] = []
+      const meshes: any[] = [], curX: number[] = [], curScale: number[] = [], curY: number[] = [], curSpinY: number[] = []
       for (let i = 0; i < PARTS.length; i++) {
         if (dead) return
         const p = PARTS[i]
         const g = await parsePart(T, `/models/${p.file}`, p.color, p.ref, CY, CZ)
         g.position.set(toX(p.acx), 0, 0)
         g.visible = false
-        scene.add(g); meshes.push(g); curX.push(toX(p.acx)); curScale.push(1.0)
+        scene.add(g); meshes.push(g); curX.push(toX(p.acx)); curScale.push(1.0); curY.push(0); curSpinY.push(0)
         setPct(15 + Math.round(((i+1)/PARTS.length)*85))
       }
       if (dead) return
-      stateRef.current = { asmGroup, meshes, curX, curScale, orb, T, renderer, scene, camera }
+      stateRef.current = { asmGroup, meshes, curX, curScale, curY, curSpinY, orb, T, renderer, scene, camera }
       setReady(true)
 
       // ── Render loop ──────────────────────────────────────────────────────
@@ -211,24 +211,42 @@ export default function ModelViewer() {
         s.asmGroup.visible = !isExploded
         s.meshes.forEach((mesh: any) => { mesh.visible = isExploded })
 
-        // Move parts + scale on hover (only matters in exploded mode, but keep lerping)
+        // Per-part animation: lift + spin + scale on hover
         s.meshes.forEach((mesh: any, i: number) => {
-          const base = PARTS[i].explX
-          s.curX[i] += (base - s.curX[i]) * 0.07
+          const isActive = act === i
+          const dist     = act !== null ? Math.abs(i - act) : 999
+
+          // X position (exploded spread)
+          s.curX[i] += (PARTS[i].explX - s.curX[i]) * 0.07
           mesh.position.x = s.curX[i]
 
-          // Scale: active=1.35, adjacent=0.82, others=1.0
-          const dist = act !== null ? Math.abs(i - act) : 999
+          // Y lift — active part rises 1.8 units above the line
+          const tY = isExploded && isActive ? 1.8 : 0
+          s.curY[i] += (tY - s.curY[i]) * 0.08
+          mesh.position.y = s.curY[i]
+
+          // Scale — active grows, immediate neighbours shrink slightly, rest normal
           const tScale = isExploded
-            ? (dist === 0 ? 1.35 : dist === 1 ? 0.82 : 1.0)
+            ? (dist === 0 ? 1.45 : dist === 1 ? 0.82 : 1.0)
             : 1.0
           s.curScale[i] += (tScale - s.curScale[i]) * 0.1
           mesh.scale.setScalar(s.curScale[i])
 
+          // Spin — active part spins fast, decelerates smoothly back to 0
+          // When inactive, also nudge rotation back toward 0 so it's clean next hover
+          const tSpin = isExploded && isActive ? 0.07 : 0
+          s.curSpinY[i] += (tSpin - s.curSpinY[i]) * 0.12
+          if (isExploded && isActive) {
+            mesh.rotation.y += s.curSpinY[i]
+          } else {
+            mesh.rotation.y += (0 - mesh.rotation.y) * 0.06 + s.curSpinY[i]
+          }
+
+          // Emissive highlight
           mesh.traverse((c: any) => {
             if (!c.isMesh) return
-            c.material.emissive?.setHex(act === i ? 0x002266 : 0x000000)
-            c.material.emissiveIntensity = act === i ? 0.35 : 0
+            c.material.emissive?.setHex(isActive ? 0x001a44 : 0x000000)
+            c.material.emissiveIntensity = isActive ? 0.45 : 0
           })
         })
         s.renderer.render(s.scene, s.camera)
