@@ -3,14 +3,17 @@
 import { useEffect, useRef, useState } from "react"
 
 // Verified measurements from actual GLB binary data (all in meters, post Y/Z-swap transform)
-// Assembly X spans -0.141 to +0.155m, center = 0.007m
-// All parts: cy = 0.01720m, cz = 0.07838m (subtract to center at origin)
-// SCALE = 27.027 maps 296mm real → ~8 Three.js units
+// full assembly.glb: X -0.135→0.161 (cx=0.013), post-swap cy=0.0172, cz=0.005
+// Individual parts share: cy=0.01720, cz=0.07838
+// SCALE = 27.027 maps 296mm → ~8 Three.js units
 
-const CY    = 0.01720   // Y center to subtract
-const CZ    = 0.07838   // Z center to subtract  
-const SCALE = 27.027    // meters → Three.js units
-const ACX   = 0.007     // assembly X center in meters
+const CY      = 0.01720   // Y center for individual parts
+const CZ      = 0.07838   // Z center for individual parts
+const ASM_CY  = 0.0172    // Y center for full assembly mesh
+const ASM_CZ  = 0.0050    // Z center for full assembly mesh
+const SCALE   = 27.027    // meters → Three.js units
+const ACX     = 0.013     // assembly X center (from full_assembly.glb)
+const ASM_FILE = "full assembly.glb"  // upload as "full assembly.glb" to public/models/
 
 const PARTS = [
   { file: "tilt rod (existing on customers blinds).glb",               label: "Tilt Rod",          desc: "Your existing blind tilt rod — TiltForge mounts onto this. Not included.",           color: "#778899", ref: true,  acx:  0.007,    explX: -8.0 },
@@ -139,7 +142,9 @@ export default function ModelViewer() {
         m2.set(((e.clientX-rect.left)/rect.width)*2-1, -((e.clientY-rect.top)/rect.height)*2+1)
         rc.setFromCamera(m2, camera)
         const targets: any[] = []
-        meshes.forEach((g: any, gi: number) => g.traverse((c: any) => { if (c.isMesh) { c._i = gi; targets.push(c) } }))
+        if (modeRef.current === "exploded") {
+          meshes.forEach((g: any, gi: number) => g.traverse((c: any) => { if (c.isMesh) { c._i = gi; targets.push(c) } }))
+        }
         const hits = rc.intersectObjects(targets, false)
         if (hits.length) {
           const idx = hits[0].object._i
@@ -153,18 +158,27 @@ export default function ModelViewer() {
         }
       })
 
-      // ── Load parts ───────────────────────────────────────────────────────
+      // ── Load full assembly mesh (for assembled/rotating modes) ────────────
+      setPct(2)
+      const asmGroup = await parsePart(T, `/models/${ASM_FILE}`, "#aaaaaa", false, ASM_CY, ASM_CZ)
+      asmGroup.position.set(0, 0, 0)
+      asmGroup.visible = true
+      scene.add(asmGroup)
+      setPct(15)
+
+      // ── Load individual parts (for exploded mode) ─────────────────────────
       const meshes: any[] = [], curX: number[] = []
       for (let i = 0; i < PARTS.length; i++) {
         if (dead) return
         const p = PARTS[i]
-        const g = await parsePart(T, `/models/${p.file}`, p.color, p.ref)
+        const g = await parsePart(T, `/models/${p.file}`, p.color, p.ref, CY, CZ)
         g.position.set(toX(p.acx), 0, 0)
+        g.visible = false   // hidden until exploded mode
         scene.add(g); meshes.push(g); curX.push(toX(p.acx))
-        setPct(Math.round(((i+1)/PARTS.length)*100))
+        setPct(15 + Math.round(((i+1)/PARTS.length)*85))
       }
       if (dead) return
-      stateRef.current = { meshes, curX, orb, T, renderer, scene, camera }
+      stateRef.current = { asmGroup, meshes, curX, orb, T, renderer, scene, camera }
       setReady(true)
 
       // ── Render loop ──────────────────────────────────────────────────────
@@ -192,9 +206,14 @@ export default function ModelViewer() {
         )
         camera.lookAt(o.look)
 
-        // Move parts
+        // Show assembly mesh in assembled/rotating; show parts in exploded
+        const isExploded = m === "exploded"
+        s.asmGroup.visible = !isExploded
+        s.meshes.forEach((mesh: any) => { mesh.visible = isExploded })
+
+        // Move parts (only matters in exploded mode, but keep lerping)
         s.meshes.forEach((mesh: any, i: number) => {
-          const base = m === "exploded" ? PARTS[i].explX : toX(PARTS[i].acx)
+          const base = PARTS[i].explX
           const tx   = act === i && !PARTS[i].ref ? base + 0.4 : base
           s.curX[i] += (tx - s.curX[i]) * 0.07
           mesh.position.x = s.curX[i]
@@ -233,50 +252,54 @@ export default function ModelViewer() {
   }
 
   return (
-    <div className="w-full select-none">
+    <div className="w-full select-none rounded-xl overflow-hidden border border-border bg-[#080c10]" style={{ height: 620 }}>
+      <div className="flex h-full">
 
-      {/* ── Full-width 3D canvas ── */}
-      <div className="w-full rounded-xl overflow-hidden border border-border bg-[#080c10] relative" style={{ height: 620 }}>
+        {/* ── 3D canvas — takes remaining width ── */}
+        <div className="relative flex-1 min-w-0">
 
-        {/* Loading overlay */}
-        {!ready && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-[#080c10]">
-            <div className="w-48 h-px bg-border mb-4 relative overflow-hidden">
-              <div className="absolute inset-y-0 left-0 bg-primary transition-all duration-200" style={{ width: `${pct}%` }} />
+          {/* Loading overlay */}
+          {!ready && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-[#080c10]">
+              <div className="w-48 h-px bg-border mb-4 relative overflow-hidden">
+                <div className="absolute inset-y-0 left-0 bg-primary transition-all duration-200" style={{ width: `${pct}%` }} />
+              </div>
+              <p className="text-xs text-muted-foreground font-mono tracking-widest">LOADING {pct}%</p>
+              <p className="text-xs text-muted-foreground/40 mt-1">{PARTS[Math.min(Math.floor(pct/(100/PARTS.length)), PARTS.length-1)]?.label}</p>
             </div>
-            <p className="text-xs text-muted-foreground font-mono tracking-widest">LOADING {pct}%</p>
-            <p className="text-xs text-muted-foreground/40 mt-1">{PARTS[Math.min(Math.floor(pct/(100/PARTS.length)), PARTS.length-1)]?.label}</p>
+          )}
+
+          <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
+
+          {/* Hint */}
+          {ready && active === null && (
+            <p className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 pointer-events-none text-xs text-white/20 tracking-wide whitespace-nowrap">
+              {mode === "exploded" ? "Hover or click a part to inspect" : "Drag · Scroll to zoom"}
+            </p>
+          )}
+
+          {/* Mode buttons */}
+          <div className="absolute top-4 left-4 flex gap-2 z-10">
+            {(["assembled","exploded","rotating"] as Mode[]).map(m => (
+              <button key={m} onClick={() => { setMode(m); reset() }}
+                className={`px-3 py-1.5 rounded text-xs font-bold uppercase tracking-widest transition-all ${
+                  mode === m ? "bg-primary text-white shadow-lg shadow-primary/30"
+                             : "bg-black/70 border border-white/10 text-white/40 hover:border-primary/40 hover:text-white/80"
+                }`}>{m}</button>
+            ))}
           </div>
-        )}
-
-        <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
-
-        {/* Hint */}
-        {ready && active === null && (
-          <p className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 pointer-events-none text-xs text-white/20 tracking-wide whitespace-nowrap">
-            Drag · Scroll to zoom · Click a part
-          </p>
-        )}
-
-        {/* Mode buttons */}
-        <div className="absolute top-4 left-4 flex gap-2 z-10">
-          {(["assembled","exploded","rotating"] as Mode[]).map(m => (
-            <button key={m} onClick={() => { setMode(m); reset() }}
-              className={`px-3 py-1.5 rounded text-xs font-bold uppercase tracking-widest transition-all ${
-                mode === m ? "bg-primary text-white shadow-lg shadow-primary/30"
-                           : "bg-black/70 border border-white/10 text-white/40 hover:border-primary/40 hover:text-white/80"
-              }`}>{m}</button>
-          ))}
         </div>
-      </div>
 
-      {/* ── Bottom panel: part list + detail card ── */}
-      <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
+        {/* ── Right panel — docked, always visible ── */}
+        <div className="w-56 flex-shrink-0 border-l border-white/5 flex flex-col bg-[#080c10]">
 
-        {/* Part list — always visible */}
-        <div className="md:col-span-2 rounded-xl border border-border bg-[#0d1117] p-4">
-          <p className="text-xs text-white/30 font-mono tracking-widest uppercase mb-3">Components</p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
+          {/* Header */}
+          <div className="px-4 pt-4 pb-3 border-b border-white/5">
+            <p className="text-[10px] text-white/25 font-mono tracking-widest uppercase">Components</p>
+          </div>
+
+          {/* Part list — scrollable */}
+          <div className="flex-1 overflow-y-auto py-2 px-2">
             {PARTS.map((p, i) => (
               <button key={i}
                 onMouseEnter={() => { if (!focused) setActive(i) }}
@@ -289,57 +312,49 @@ export default function ModelViewer() {
                     stateRef.current.orb.tR = nf !== null ? 3.5 : 10
                   }
                 }}
-                className={`text-left px-3 py-2 rounded-lg text-xs flex items-center gap-2 transition-all ${
+                className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-2 mb-0.5 transition-all ${
                   active === i
-                    ? "bg-primary/15 text-primary border border-primary/30"
+                    ? "bg-primary/15 text-primary"
                     : p.ref
-                      ? "text-white/25 hover:text-white/40 border border-transparent hover:border-white/10"
-                      : "text-white/50 hover:text-white/80 border border-transparent hover:border-white/15"
+                      ? "text-white/20 hover:text-white/35"
+                      : "text-white/45 hover:text-white/75"
                 }`}
               >
-                <span className="w-2.5 h-2.5 rounded-full flex-shrink-0 border"
-                  style={{ background: p.color, borderColor: p.ref ? "rgba(255,255,255,0.15)" : "transparent", opacity: p.ref ? 0.5 : 1 }}
+                <span className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ background: p.color, opacity: p.ref ? 0.4 : 1 }}
                 />
                 <span className="truncate">{p.label}</span>
-                {p.ref && <span className="text-[9px] text-white/20 ml-auto flex-shrink-0">—</span>}
+                {p.ref && <span className="text-[9px] text-white/15 ml-auto flex-shrink-0">—</span>}
               </button>
             ))}
           </div>
-        </div>
 
-        {/* Detail card */}
-        <div className="rounded-xl border border-border bg-[#0d1117] p-4 flex flex-col justify-between min-h-[140px]">
-          {active !== null ? (
-            <>
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="w-3 h-3 rounded-full flex-shrink-0"
+          {/* Detail panel — slides in from bottom when part selected */}
+          <div
+            className="border-t border-white/5 overflow-hidden transition-all duration-300"
+            style={{ maxHeight: active !== null ? 200 : 0 }}
+          >
+            {active !== null && (
+              <div className="px-4 py-3">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                     style={{ background: PARTS[active].color, opacity: PARTS[active].ref ? 0.5 : 1 }}
                   />
-                  <p className="text-sm font-semibold text-primary leading-tight">{PARTS[active].label}</p>
+                  <p className="text-xs font-semibold text-primary leading-tight truncate">{PARTS[active].label}</p>
                   {PARTS[active].ref && (
-                    <span className="text-[10px] border border-white/15 text-white/35 px-1.5 py-0.5 rounded ml-auto flex-shrink-0">NOT INCLUDED</span>
+                    <span className="text-[9px] border border-white/15 text-white/30 px-1 py-0.5 rounded ml-auto flex-shrink-0">N/A</span>
                   )}
                 </div>
-                <p className="text-sm text-white/65 leading-relaxed">{PARTS[active].desc}</p>
+                <p className="text-[11px] text-white/50 leading-relaxed">{PARTS[active].desc}</p>
+                {focused !== null && (
+                  <button onClick={reset} className="mt-2 text-[10px] text-white/25 hover:text-primary transition-colors">
+                    ← full assembly
+                  </button>
+                )}
               </div>
-              {focused !== null && (
-                <button onClick={reset}
-                  className="mt-3 text-xs text-white/30 hover:text-white/60 transition-colors text-left">
-                  ← Back to full assembly
-                </button>
-              )}
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full gap-2 text-center">
-              <div className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center">
-                <svg className="w-4 h-4 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
-                </svg>
-              </div>
-              <p className="text-xs text-white/25">Click any part to see details</p>
-            </div>
-          )}
+            )}
+          </div>
+
         </div>
       </div>
     </div>
@@ -347,7 +362,7 @@ export default function ModelViewer() {
 }
 
 // ── GLB parser ────────────────────────────────────────────────────────────────
-async function parsePart(T: any, url: string, fallback: string, isRef: boolean): Promise<any> {
+async function parsePart(T: any, url: string, fallback: string, isRef: boolean, cy: number, cz: number): Promise<any> {
   const group = new T.Group()
   try {
     const r = await fetch(url)
@@ -359,49 +374,54 @@ async function parsePart(T: any, url: string, fallback: string, isRef: boolean):
     const bin  = buf.slice(20 + jlen + 8)
     const bdv  = new DataView(bin)
 
-    // Read typed array from accessor, byte by byte (avoids alignment issues)
     const readAcc = (idx: number) => {
       const acc  = gltf.accessors[idx]
       const bv   = gltf.bufferViews[acc.bufferView]
       const base = (bv.byteOffset ?? 0) + (acc.byteOffset ?? 0)
       const nc   = ({ SCALAR:1, VEC2:2, VEC3:3, VEC4:4 } as Record<string,number>)[acc.type] ?? 1
       const str  = bv.byteStride ?? nc * 4
-      if (acc.componentType === 5126) { // float32
+      if (acc.componentType === 5126) {
         const o = new Float32Array(acc.count * nc)
         for (let i = 0; i < acc.count; i++)
           for (let c = 0; c < nc; c++)
             o[i*nc+c] = bdv.getFloat32(base + i*str + c*4, true)
         return o
       }
-      // uint32 or uint16 indices
       const o = new Uint32Array(acc.count)
       if (acc.componentType === 5125) for (let i=0;i<acc.count;i++) o[i] = bdv.getUint32(base+i*4, true)
       else                            for (let i=0;i<acc.count;i++) o[i] = bdv.getUint16(base+i*2, true)
       return o
     }
 
+    // For single-mesh files (full assembly), compute global X center across all primitives first
+    let globalXmin = Infinity, globalXmax = -Infinity
+    for (const mesh of gltf.meshes ?? [])
+      for (const prim of mesh.primitives ?? [])
+        if (prim.attributes?.POSITION != null) {
+          const raw = readAcc(prim.attributes.POSITION) as Float32Array
+          for (let i = 0; i < raw.length/3; i++) {
+            if (raw[i*3] < globalXmin) globalXmin = raw[i*3]
+            if (raw[i*3] > globalXmax) globalXmax = raw[i*3]
+          }
+        }
+    const globalXcx = (globalXmin + globalXmax) / 2
+
     for (const mesh of gltf.meshes ?? []) {
       for (const prim of mesh.primitives ?? []) {
         const geo = new T.BufferGeometry()
 
-        // Positions: apply Y/Z swap + center offset in one pass
         if (prim.attributes?.POSITION != null) {
           const raw = readAcc(prim.attributes.POSITION) as Float32Array
           const n   = raw.length / 3
           const pos = new Float32Array(n * 3)
-          // Part's local X center (raw meters) — geometry must be centered, world pos set via group.position
-          let xmin = Infinity, xmax = -Infinity
-          for (let i = 0; i < n; i++) { if (raw[i*3] < xmin) xmin = raw[i*3]; if (raw[i*3] > xmax) xmax = raw[i*3] }
-          const pcx = (xmin + xmax) / 2
           for (let i = 0; i < n; i++) {
-            pos[i*3]   = (raw[i*3]   - pcx) * SCALE  // X: local geometry centered at 0
-            pos[i*3+1] = (raw[i*3+2] - CY)  * SCALE  // Y: was Z, subtract shared CY
-            pos[i*3+2] = (-raw[i*3+1] - CZ) * SCALE  // Z: was -Y, subtract shared CZ
+            pos[i*3]   = (raw[i*3]   - globalXcx) * SCALE
+            pos[i*3+1] = (raw[i*3+2] - cy)        * SCALE
+            pos[i*3+2] = (-raw[i*3+1] - cz)       * SCALE
           }
           geo.setAttribute("position", new T.BufferAttribute(pos, 3))
         }
 
-        // Vertex colors
         if (prim.attributes?.COLOR_0 != null) {
           const acc2 = gltf.accessors[prim.attributes.COLOR_0]
           const raw  = readAcc(prim.attributes.COLOR_0) as Float32Array
@@ -415,7 +435,6 @@ async function parsePart(T: any, url: string, fallback: string, isRef: boolean):
           }
         }
 
-        // Indices
         if (prim.indices != null)
           geo.setIndex(new T.BufferAttribute(new Uint32Array(readAcc(prim.indices)), 1))
 
@@ -435,6 +454,5 @@ async function parsePart(T: any, url: string, fallback: string, isRef: boolean):
     console.warn(`Failed: ${url}`, e)
     group.add(new T.Mesh(new T.BoxGeometry(0.5, 0.5, 0.3), new T.MeshStandardMaterial({ color: fallback })))
   }
-  // NOTE: group.position is set by caller — don't touch it here
   return group
 }
