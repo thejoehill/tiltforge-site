@@ -13,19 +13,19 @@ const SCALE = 27.027    // meters → Three.js units
 const ACX   = 0.007     // assembly X center in meters
 
 const PARTS = [
-  { file: "tilt_rod__existing_on_customers_blinds_.glb",               label: "Tilt Rod",          desc: "Your existing blind tilt rod — TiltForge mounts onto this. Not included.",           color: "#778899", ref: true,  acx:  0.007,    explX: -8.0 },
+  { file: "tilt rod (existing on customers blinds).glb",               label: "Tilt Rod",          desc: "Your existing blind tilt rod — TiltForge mounts onto this. Not included.",           color: "#778899", ref: true,  acx:  0.007,    explX: -8.0 },
   { file: "housing.glb",                                               label: "Housing",           desc: "Main structural enclosure — 3D-printed from standard filament.",                    color: "#0098ff", ref: false, acx: -0.07665,  explX: -5.5 },
-  { file: "friction_clutch_stack.glb",                                 label: "Friction Clutch",   desc: "Tuned slip clutch — transmits torque, protects against overload.",                   color: "#888e92", ref: false, acx: -0.02652,  explX: -3.2 },
-  { file: "IP_one4_Locknut.glb",                                       label: "Lock Nut",          desc: "Standard ¼\" lock nut — off-the-shelf, replaceable anywhere.",                      color: "#888e92", ref: false, acx: -0.012,    explX: -2.1 },
-  { file: "washer_plate.glb",                                          label: "Washer Plate",      desc: "Preload bearing surface for the clutch stack.",                                      color: "#a7adb1", ref: false, acx: -0.017,    explX: -1.1 },
-  { file: "housing_cap.glb",                                           label: "Housing Cap",       desc: "Closes the drive housing — 3D-printed, individually replaceable.",                  color: "#dde2e4", ref: false, acx: -0.0011,   explX:  0.0 },
-  { file: "pin_carrier.glb",                                           label: "Pin Carrier",       desc: "Output stage — transfers cycloid motion to the output shaft.",                      color: "#dde2e4", ref: false, acx:  0.014,    explX:  1.1 },
-  { file: "3mm_steel_pins.glb",                                        label: "3mm Steel Pins",    desc: "Hardened steel drive pins — standard off-the-shelf hardware.",                      color: "#a7adb1", ref: false, acx:  0.028,    explX:  2.3 },
-  { file: "cycloid_input_gear.glb",                                    label: "Cycloid Disc",      desc: "Hypocycloid profile — delivers smooth, high-ratio gear reduction.",                  color: "#ff7043", ref: false, acx:  0.040,    explX:  3.5 },
-  { file: "fixed_housing_virtual_ring_pins.glb",                       label: "Ring Pin Housing",  desc: "Fixed outer ring with virtual pins — reaction element of the cycloid stage.",        color: "#dde2e4", ref: false, acx:  0.05955,  explX:  4.7 },
-  { file: "input_gear_attached_to_axle_as_input_to_cycloid_drive.glb", label: "Input Gear + Axle", desc: "Motor-side input — connects motor rotation to cam and cycloid stage.",               color: "#c8ced2", ref: false, acx:  0.0806,   explX:  5.9 },
-  { file: "cam_axle.glb",                                              label: "Cam Axle",          desc: "Eccentric cam on motor shaft — drives the cycloid disc in its lobed orbit.",         color: "#546e7a", ref: false, acx:  0.100,    explX:  7.1 },
-  { file: "tilt_rod_adapter_-_quarter_inch_square.glb",                label: "Tilt Rod Adapter",  desc: "Couples TiltForge output to standard ¼\" square tilt rods.",                       color: "#0098ff", ref: false, acx:  0.12235,  explX:  8.3 },
+  { file: "friction clutch stack.glb",                                 label: "Friction Clutch",   desc: "Tuned slip clutch — transmits torque, protects against overload.",                   color: "#888e92", ref: false, acx: -0.02652,  explX: -3.2 },
+  { file: "IP one4 Locknut.glb",                                       label: "Lock Nut",          desc: "Standard ¼\" lock nut — off-the-shelf, replaceable anywhere.",                      color: "#888e92", ref: false, acx: -0.012,    explX: -2.1 },
+  { file: "washer plate.glb",                                          label: "Washer Plate",      desc: "Preload bearing surface for the clutch stack.",                                      color: "#a7adb1", ref: false, acx: -0.017,    explX: -1.1 },
+  { file: "housing cap.glb",                                           label: "Housing Cap",       desc: "Closes the drive housing — 3D-printed, individually replaceable.",                  color: "#dde2e4", ref: false, acx: -0.0011,   explX:  0.0 },
+  { file: "pin carrier.glb",                                           label: "Pin Carrier",       desc: "Output stage — transfers cycloid motion to the output shaft.",                      color: "#dde2e4", ref: false, acx:  0.014,    explX:  1.1 },
+  { file: "3mm steel pins.glb",                                        label: "3mm Steel Pins",    desc: "Hardened steel drive pins — standard off-the-shelf hardware.",                      color: "#a7adb1", ref: false, acx:  0.028,    explX:  2.3 },
+  { file: "cycloid input gear.glb",                                    label: "Cycloid Disc",      desc: "Hypocycloid profile — delivers smooth, high-ratio gear reduction.",                  color: "#ff7043", ref: false, acx:  0.040,    explX:  3.5 },
+  { file: "fixed housing virtual ring pins.glb",                       label: "Ring Pin Housing",  desc: "Fixed outer ring with virtual pins — reaction element of the cycloid stage.",        color: "#dde2e4", ref: false, acx:  0.05955,  explX:  4.7 },
+  { file: "input gear attached to axle as input to cycloid drive.glb", label: "Input Gear + Axle", desc: "Motor-side input — connects motor rotation to cam and cycloid stage.",               color: "#c8ced2", ref: false, acx:  0.0806,   explX:  5.9 },
+  { file: "cam axle.glb",                                              label: "Cam Axle",          desc: "Eccentric cam on motor shaft — drives the cycloid disc in its lobed orbit.",         color: "#546e7a", ref: false, acx:  0.100,    explX:  7.1 },
+  { file: "tilt rod adapter - quarter inch square.glb",                label: "Tilt Rod Adapter",  desc: "Couples TiltForge output to standard ¼\" square tilt rods.",                       color: "#0098ff", ref: false, acx:  0.12235,  explX:  8.3 },
 ]
 
 const toX = (acx: number) => (acx - ACX) * SCALE
@@ -89,11 +89,11 @@ export default function ModelViewer() {
 
       // ── Orbit controller ─────────────────────────────────────────────────
       const orb = {
-        th: 0.3, ph: 1.1, r: 13,
-        tTh: 0.3, tPh: 1.1, tR: 13,
+        th: 0.25, ph: 1.32, r: 10,
+        tTh: 0.25, tPh: 1.32, tR: 10,
         drag: false, moved: false, lx: 0, ly: 0,
         look: new T.Vector3(), tLook: new T.Vector3(),
-        autoTh: 0.3,
+        autoTh: 0.25,
       }
       const cv = renderer.domElement
       const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v))
@@ -146,7 +146,7 @@ export default function ModelViewer() {
           const nf = focusRef.current === idx ? null : idx
           setFocused(nf); setActive(nf)
           orb.tLook.set(nf !== null ? (modeRef.current === "exploded" ? PARTS[nf].explX : toX(PARTS[nf].acx)) : 0, 0, 0)
-          orb.tR = nf !== null ? 4.5 : 13
+          orb.tR = nf !== null ? 3.5 : 10
         } else {
           setFocused(null); setActive(null)
           orb.tLook.set(0, 0, 0); orb.tR = 13
@@ -229,7 +229,7 @@ export default function ModelViewer() {
 
   const reset = () => {
     setFocused(null); setActive(null)
-    if (stateRef.current) { stateRef.current.orb.tLook.set(0,0,0); stateRef.current.orb.tR = 13 }
+    if (stateRef.current) { stateRef.current.orb.tLook.set(0,0,0); stateRef.current.orb.tR = 10 }
   }
 
   return (
@@ -273,7 +273,7 @@ export default function ModelViewer() {
                 setFocused(nf); setActive(nf)
                 if (stateRef.current) {
                   stateRef.current.orb.tLook.set(nf !== null ? PARTS[i].explX : 0, 0, 0)
-                  stateRef.current.orb.tR = nf !== null ? 4.5 : 13
+                  stateRef.current.orb.tR = nf !== null ? 3.5 : 10
                 }
               }}
               className={`text-left px-2.5 py-1 rounded text-xs whitespace-nowrap flex items-center gap-2 transition-all ${
@@ -308,7 +308,9 @@ export default function ModelViewer() {
 async function parsePart(T: any, url: string, fallback: string, isRef: boolean): Promise<any> {
   const group = new T.Group()
   try {
-    const buf  = (await (await fetch(url)).arrayBuffer()).slice(0)
+    const r = await fetch(url)
+    if (!r.ok) throw new Error(`HTTP ${r.status}`)
+    const buf  = (await r.arrayBuffer()).slice(0)
     const dv   = new DataView(buf)
     const jlen = dv.getUint32(12, true)
     const gltf = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 20, jlen)))
