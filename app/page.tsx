@@ -8,29 +8,34 @@ import Comparison from "@/components/sections/comparison"
 import FAQ from "@/components/sections/faq"
 import FinalCTA from "@/components/sections/final-cta"
 import Footer from "@/components/sections/footer"
+import AlphaBanner from "@/components/ui/alpha-banner"
 import TestScene from '@/components/TestScene'
 
 export default function Home() {
   return (
     <main className="w-full">
+      {/* Sticky alpha status bar */}
+      <AlphaBanner />
 
-      <Hero />
-      <Problem />
-      <Solution />
-      <ProductTiers />
-      <HowItWorks />
+      {/* Add pt-10 to offset the fixed banner height */}
+      <div className="pt-10">
+        <Hero />
+        <Problem />
+        <Solution />
+        <ProductTiers />
+        <HowItWorks />
 
-      {/* TEMP 3D TEST */}
-      <div style={{ height: "400px" }}>
-        <TestScene />
+        {/* TEMP 3D TEST */}
+        <div style={{ height: "400px" }}>
+          <TestScene />
+        </div>
+
+        <Ecosystem />
+        <Comparison />
+        <FAQ />
+        <FinalCTA />
+        <Footer />
       </div>
-
-      <Ecosystem />
-      <Comparison />
-      <FAQ />
-      <FinalCTA />
-      <Footer />
-
     </main>
   )
 }
