@@ -3,153 +3,99 @@
 import { useState } from "react"
 
 interface WaitlistFormProps {
-  variant?: "hero" | "section" | "compact"
+  source?: string
   placeholder?: string
   buttonText?: string
-  successMessage?: string
+  className?: string
 }
 
 export default function WaitlistForm({
-  variant = "section",
-  placeholder = "your@email.com",
-  buttonText = "Get Early Access",
-  successMessage = "You're on the list. We'll be in touch.",
+  source = "unknown",
+  placeholder = "you@email.com",
+  buttonText = "Join Early Access",
+  className = "",
 }: WaitlistFormProps) {
   const [email, setEmail] = useState("")
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
-  const [errorMsg, setErrorMsg] = useState("")
+  const [message, setMessage] = useState("")
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email || !email.includes("@")) {
-      setErrorMsg("Please enter a valid email.")
+  const handleSubmit = async () => {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setStatus("error")
+      setMessage("Please enter a valid email address.")
       return
     }
-
     setStatus("loading")
-    setErrorMsg("")
-
     try {
-      // ── Buttondown integration ──────────────────────────────────────────────
-      // 1. Create a free account at https://buttondown.com
-      // 2. Go to Settings → API Keys → copy your key
-      // 3. Replace "YOUR_BUTTONDOWN_API_KEY" below with your actual key
-      // 4. Optionally set NEXT_PUBLIC_BUTTONDOWN_API_KEY in your .env.local
-      //    and use process.env.NEXT_PUBLIC_BUTTONDOWN_API_KEY here
-      // ───────────────────────────────────────────────────────────────────────
-      const API_KEY = process.env.NEXT_PUBLIC_BUTTONDOWN_API_KEY ?? "YOUR_BUTTONDOWN_API_KEY"
-
-      const res = await fetch("https://api.buttondown.email/v1/subscribers", {
+      const res = await fetch("/api/waitlist", {
         method: "POST",
-        headers: {
-          Authorization: `Token ${API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          tags: ["early-access", "alpha"],
-          metadata: {
-            source: "tiltforge-website",
-            variant,
-          },
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, source }),
       })
-
-      if (res.ok || res.status === 201) {
-        setStatus("success")
-        setEmail("")
-      } else if (res.status === 400) {
-        // Already subscribed is treated as success UX-wise
-        const body = await res.json().catch(() => ({}))
-        if (JSON.stringify(body).includes("already")) {
-          setStatus("success")
-          setEmail("")
-        } else {
-          setStatus("error")
-          setErrorMsg("Something went wrong. Try again.")
-        }
-      } else {
-        setStatus("error")
-        setErrorMsg("Something went wrong. Try again.")
-      }
+      const data = await res.json()
+      setStatus("success")
+      setMessage(data.message ?? "You're on the list!")
+      setEmail("")
     } catch {
       setStatus("error")
-      setErrorMsg("Network error. Check your connection.")
+      setMessage("Something went wrong. Try again.")
     }
   }
 
   if (status === "success") {
     return (
-      <div
-        className={`flex items-center gap-3 px-5 py-4 rounded-lg border border-primary/40 bg-primary/10 ${
-          variant === "hero" ? "max-w-md mx-auto" : "max-w-sm"
-        }`}
-      >
-        <span className="text-primary text-xl">✓</span>
-        <p className="text-sm text-foreground font-medium">{successMessage}</p>
+      <div className={`flex items-center gap-3 px-5 py-3 rounded-lg bg-primary/10 border border-primary/30 ${className}`}>
+        <svg className="w-5 h-5 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        </svg>
+        <p className="text-sm text-primary font-medium">{message}</p>
       </div>
     )
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className={`flex flex-col gap-3 ${variant === "hero" ? "w-full max-w-md mx-auto" : "w-full max-w-sm"}`}
-    >
-      <div className="flex flex-col sm:flex-row gap-2 w-full">
+    <div className={`flex flex-col gap-2 w-full max-w-md ${className}`}>
+      <div className="flex gap-2">
         <input
           type="email"
           value={email}
-          onChange={(e) => {
-            setEmail(e.target.value)
-            setErrorMsg("")
-          }}
+          onChange={(e) => { setEmail(e.target.value); setStatus("idle"); setMessage("") }}
+          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           placeholder={placeholder}
-          disabled={status === "loading"}
           className="
-            flex-1 h-11 px-4 rounded-md
-            bg-input border border-border
-            text-foreground placeholder:text-muted-foreground
-            text-sm
-            focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/60
-            disabled:opacity-50
-            transition-all
+            flex-1 min-w-0 px-4 py-3 rounded-lg
+            bg-card-bg border border-border
+            text-foreground placeholder:text-secondary
+            focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/30
+            transition-all text-sm
           "
-          required
+          disabled={status === "loading"}
         />
         <button
-          type="submit"
+          onClick={handleSubmit}
           disabled={status === "loading"}
           className="
-            h-11 px-5 rounded-md
-            bg-primary text-white font-semibold text-sm
-            hover:bg-primary/90 active:scale-[0.98]
+            px-5 py-3 rounded-lg font-semibold text-sm whitespace-nowrap
+            bg-primary text-black
+            hover:bg-primary/90 active:scale-[0.97]
             disabled:opacity-60 disabled:cursor-not-allowed
-            transition-all whitespace-nowrap
-            relative overflow-hidden
+            transition-all
           "
         >
           {status === "loading" ? (
             <span className="flex items-center gap-2">
-              <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
               </svg>
               Joining…
             </span>
-          ) : (
-            buttonText
-          )}
+          ) : buttonText}
         </button>
       </div>
-
-      {errorMsg && (
-        <p className="text-sm text-red-400 ml-1">{errorMsg}</p>
+      {status === "error" && (
+        <p className="text-xs text-red-400 pl-1">{message}</p>
       )}
-
-      <p className="text-xs text-muted-foreground ml-1">
-        No spam. Alpha updates only. Unsubscribe anytime.
-      </p>
-    </form>
+    </div>
   )
 }
