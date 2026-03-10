@@ -16,19 +16,19 @@ const ACX     = 0.013     // assembly X center (from full_assembly.glb)
 const ASM_FILE = "full assembly.glb"  // upload as "full assembly.glb" to public/models/
 
 const PARTS = [
-  { file: "tilt rod (existing on customers blinds).glb",               label: "Tilt Rod",          desc: "Your existing blind tilt rod — TiltForge mounts onto this. Not included.",           color: "#778899", ref: true,  acx:  0.007,    explX: -8.0 },
-  { file: "housing.glb",                                               label: "Housing",           desc: "Main structural enclosure — 3D-printed from standard filament.",                    color: "#0098ff", ref: false, acx: -0.07665,  explX: -5.5 },
-  { file: "friction clutch stack.glb",                                 label: "Friction Clutch",   desc: "Tuned slip clutch — transmits torque, protects against overload.",                   color: "#888e92", ref: false, acx: -0.02652,  explX: -3.2 },
-  { file: "IP one4 Locknut.glb",                                       label: "Lock Nut",          desc: "Standard ¼\" lock nut — off-the-shelf, replaceable anywhere.",                      color: "#888e92", ref: false, acx: -0.012,    explX: -2.1 },
-  { file: "washer plate.glb",                                          label: "Washer Plate",      desc: "Preload bearing surface for the clutch stack.",                                      color: "#a7adb1", ref: false, acx: -0.017,    explX: -1.1 },
-  { file: "housing cap.glb",                                           label: "Housing Cap",       desc: "Closes the drive housing — 3D-printed, individually replaceable.",                  color: "#dde2e4", ref: false, acx: -0.0011,   explX:  0.0 },
-  { file: "pin carrier.glb",                                           label: "Pin Carrier",       desc: "Output stage — transfers cycloid motion to the output shaft.",                      color: "#dde2e4", ref: false, acx:  0.014,    explX:  1.1 },
-  { file: "3mm steel pins.glb",                                        label: "3mm Steel Pins",    desc: "Hardened steel drive pins — standard off-the-shelf hardware.",                      color: "#a7adb1", ref: false, acx:  0.028,    explX:  2.3 },
-  { file: "cycloid input gear.glb",                                    label: "Cycloid Disc",      desc: "Hypocycloid profile — delivers smooth, high-ratio gear reduction.",                  color: "#ff7043", ref: false, acx:  0.040,    explX:  3.5 },
-  { file: "fixed housing virtual ring pins.glb",                       label: "Ring Pin Housing",  desc: "Fixed outer ring with virtual pins — reaction element of the cycloid stage.",        color: "#dde2e4", ref: false, acx:  0.05955,  explX:  4.7 },
-  { file: "input gear attached to axle as input to cycloid drive.glb", label: "Input Gear + Axle", desc: "Motor-side input — connects motor rotation to cam and cycloid stage.",               color: "#c8ced2", ref: false, acx:  0.0806,   explX:  5.9 },
-  { file: "cam axle.glb",                                              label: "Cam Axle",          desc: "Eccentric cam on motor shaft — drives the cycloid disc in its lobed orbit.",         color: "#546e7a", ref: false, acx:  0.100,    explX:  7.1 },
-  { file: "tilt rod adapter - quarter inch square.glb",                label: "Tilt Rod Adapter",  desc: "Couples TiltForge output to standard ¼\" square tilt rods.",                       color: "#0098ff", ref: false, acx:  0.12235,  explX:  8.3 },
+  { file: "tilt rod (existing on customers blinds).glb",               label: "Tilt Rod",          desc: "Your existing blind tilt rod — TiltForge mounts onto this. Not included.",           color: "#778899", ref: true,  acx:  0.007,    explX: -4.5 },
+  { file: "housing.glb",                                               label: "Housing",           desc: "Main structural enclosure — 3D-printed from standard filament.",                    color: "#0098ff", ref: false, acx: -0.07665,  explX: -3.2 },
+  { file: "friction clutch stack.glb",                                 label: "Friction Clutch",   desc: "Tuned slip clutch — transmits torque, protects against overload.",                   color: "#888e92", ref: false, acx: -0.02652,  explX: -2.1 },
+  { file: "IP one4 Locknut.glb",                                       label: "Lock Nut",          desc: "Standard ¼\" lock nut — off-the-shelf, replaceable anywhere.",                      color: "#888e92", ref: false, acx: -0.012,    explX: -1.4 },
+  { file: "washer plate.glb",                                          label: "Washer Plate",      desc: "Preload bearing surface for the clutch stack.",                                      color: "#a7adb1", ref: false, acx: -0.017,    explX: -0.8 },
+  { file: "housing cap.glb",                                           label: "Housing Cap",       desc: "Closes the drive housing — 3D-printed, individually replaceable.",                  color: "#dde2e4", ref: false, acx: -0.0011,   explX: -0.1 },
+  { file: "pin carrier.glb",                                           label: "Pin Carrier",       desc: "Output stage — transfers cycloid motion to the output shaft.",                      color: "#dde2e4", ref: false, acx:  0.014,    explX:  0.6 },
+  { file: "3mm steel pins.glb",                                        label: "3mm Steel Pins",    desc: "Hardened steel drive pins — standard off-the-shelf hardware.",                      color: "#a7adb1", ref: false, acx:  0.028,    explX:  1.3 },
+  { file: "cycloid input gear.glb",                                    label: "Cycloid Disc",      desc: "Hypocycloid profile — delivers smooth, high-ratio gear reduction.",                  color: "#ff7043", ref: false, acx:  0.040,    explX:  2.1 },
+  { file: "fixed housing virtual ring pins.glb",                       label: "Ring Pin Housing",  desc: "Fixed outer ring with virtual pins — reaction element of the cycloid stage.",        color: "#dde2e4", ref: false, acx:  0.05955,  explX:  2.9 },
+  { file: "input gear attached to axle as input to cycloid drive.glb", label: "Input Gear + Axle", desc: "Motor-side input — connects motor rotation to cam and cycloid stage.",               color: "#c8ced2", ref: false, acx:  0.0806,   explX:  3.7 },
+  { file: "cam axle.glb",                                              label: "Cam Axle",          desc: "Eccentric cam on motor shaft — drives the cycloid disc in its lobed orbit.",         color: "#546e7a", ref: false, acx:  0.100,    explX:  4.4 },
+  { file: "tilt rod adapter - quarter inch square.glb",                label: "Tilt Rod Adapter",  desc: "Couples TiltForge output to standard ¼\" square tilt rods.",                       color: "#0098ff", ref: false, acx:  0.12235,  explX:  5.1 },
 ]
 
 const toX = (acx: number) => (acx - ACX) * SCALE
@@ -92,8 +92,8 @@ export default function ModelViewer() {
 
       // ── Orbit controller ─────────────────────────────────────────────────
       const orb = {
-        th: 0.4, ph: 1.15, r: 10,
-        tTh: 0.4, tPh: 1.15, tR: 10,
+        th: 0.4, ph: 1.15, r: 8,
+        tTh: 0.4, tPh: 1.15, tR: 8,
         drag: false, moved: false, lx: 0, ly: 0,
         look: new T.Vector3(), tLook: new T.Vector3(),
         autoTh: 0.4,
@@ -151,7 +151,7 @@ export default function ModelViewer() {
           const nf = focusRef.current === idx ? null : idx
           setFocused(nf); setActive(nf)
           orb.tLook.set(nf !== null ? (modeRef.current === "exploded" ? PARTS[nf].explX : toX(PARTS[nf].acx)) : 0, 0, 0)
-          orb.tR = nf !== null ? 3.5 : 10
+          orb.tR = nf !== null ? 3.5 : 8
         } else {
           setFocused(null); setActive(null)
           orb.tLook.set(0, 0, 0); orb.tR = 13
@@ -167,18 +167,18 @@ export default function ModelViewer() {
       setPct(15)
 
       // ── Load individual parts (for exploded mode) ─────────────────────────
-      const meshes: any[] = [], curX: number[] = []
+      const meshes: any[] = [], curX: number[] = [], curScale: number[] = []
       for (let i = 0; i < PARTS.length; i++) {
         if (dead) return
         const p = PARTS[i]
         const g = await parsePart(T, `/models/${p.file}`, p.color, p.ref, CY, CZ)
         g.position.set(toX(p.acx), 0, 0)
-        g.visible = false   // hidden until exploded mode
-        scene.add(g); meshes.push(g); curX.push(toX(p.acx))
+        g.visible = false
+        scene.add(g); meshes.push(g); curX.push(toX(p.acx)); curScale.push(1.0)
         setPct(15 + Math.round(((i+1)/PARTS.length)*85))
       }
       if (dead) return
-      stateRef.current = { asmGroup, meshes, curX, orb, T, renderer, scene, camera }
+      stateRef.current = { asmGroup, meshes, curX, curScale, orb, T, renderer, scene, camera }
       setReady(true)
 
       // ── Render loop ──────────────────────────────────────────────────────
@@ -211,16 +211,24 @@ export default function ModelViewer() {
         s.asmGroup.visible = !isExploded
         s.meshes.forEach((mesh: any) => { mesh.visible = isExploded })
 
-        // Move parts (only matters in exploded mode, but keep lerping)
+        // Move parts + scale on hover (only matters in exploded mode, but keep lerping)
         s.meshes.forEach((mesh: any, i: number) => {
           const base = PARTS[i].explX
-          const tx   = act === i && !PARTS[i].ref ? base + 0.4 : base
-          s.curX[i] += (tx - s.curX[i]) * 0.07
+          s.curX[i] += (base - s.curX[i]) * 0.07
           mesh.position.x = s.curX[i]
+
+          // Scale: active=1.35, adjacent=0.82, others=1.0
+          const dist = act !== null ? Math.abs(i - act) : 999
+          const tScale = isExploded
+            ? (dist === 0 ? 1.35 : dist === 1 ? 0.82 : 1.0)
+            : 1.0
+          s.curScale[i] += (tScale - s.curScale[i]) * 0.1
+          mesh.scale.setScalar(s.curScale[i])
+
           mesh.traverse((c: any) => {
             if (!c.isMesh) return
-            c.material.emissive?.setHex(act === i ? 0x004499 : 0x000000)
-            c.material.emissiveIntensity = act === i ? 0.4 : 0
+            c.material.emissive?.setHex(act === i ? 0x002266 : 0x000000)
+            c.material.emissiveIntensity = act === i ? 0.35 : 0
           })
         })
         s.renderer.render(s.scene, s.camera)
@@ -248,7 +256,7 @@ export default function ModelViewer() {
 
   const reset = () => {
     setFocused(null); setActive(null)
-    if (stateRef.current) { stateRef.current.orb.tLook.set(0,0,0); stateRef.current.orb.tR = 10 }
+    if (stateRef.current) { stateRef.current.orb.tLook.set(0,0,0); stateRef.current.orb.tR = 8 }
   }
 
   return (
@@ -309,7 +317,7 @@ export default function ModelViewer() {
                   setFocused(nf); setActive(nf)
                   if (stateRef.current) {
                     stateRef.current.orb.tLook.set(nf !== null ? (mode === "exploded" ? PARTS[i].explX : toX(PARTS[i].acx)) : 0, 0, 0)
-                    stateRef.current.orb.tR = nf !== null ? 3.5 : 10
+                    stateRef.current.orb.tR = nf !== null ? 3.5 : 8
                   }
                 }}
                 className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-2 mb-0.5 transition-all ${
