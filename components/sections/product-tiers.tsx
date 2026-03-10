@@ -1,5 +1,3 @@
-import Button from "@/components/ui/button"
-
 export default function ProductTiers() {
   const tiers = [
     {
@@ -12,8 +10,9 @@ export default function ProductTiers() {
         "Pre-assembled and bench-tested",
         "Ideal for non-DIY beta testers",
       ],
-      cta: "Join Beta",
+      cta: "Notify Me",
       highlight: true,
+      status: "alpha",
     },
     {
       name: "TiltForge Maker Kit",
@@ -25,8 +24,9 @@ export default function ProductTiers() {
         "Great for tinkerers and modders",
         "Full mechanical transparency",
       ],
-      cta: "Build One",
+      cta: "Notify Me",
       highlight: false,
+      status: "alpha",
     },
     {
       name: "TiltForge Studio (STLs)",
@@ -38,8 +38,9 @@ export default function ProductTiers() {
         "Lifetime design revisions included",
         "For printers, hackers, and labs",
       ],
-      cta: "Get Files",
+      cta: "Notify Me",
       highlight: false,
+      status: "alpha",
     },
     {
       name: "Replacement Parts",
@@ -51,20 +52,38 @@ export default function ProductTiers() {
         "No bundles, no forced upgrades",
         "Designed to stay available",
       ],
-      cta: "View Parts",
+      cta: "Notify Me",
       highlight: false,
+      status: "alpha",
     },
   ]
+
+  const scrollToWaitlist = () => {
+    const el = document.getElementById("waitlist")
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" })
+  }
 
   return (
     <section className="w-full px-6 py-20 md:py-32">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-6">
           <h2 className="text-4xl md:text-5xl font-bold text-balance mb-4">
             Choose How Deep You Want to Go.
           </h2>
           <p className="text-lg text-secondary">
             From ready-to-run units to full DIY builds and replacement parts.
+          </p>
+        </div>
+
+        {/* Alpha notice */}
+        <div className="flex items-center justify-center gap-2 mb-12 px-5 py-3 rounded-lg border border-primary/20 bg-primary/5 max-w-xl mx-auto">
+          <span className="relative flex h-2 w-2 flex-shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+          </span>
+          <p className="text-sm text-foreground/70 text-center">
+            <strong className="text-foreground">Not available yet.</strong> These tiers are our planned lineup.
+            Join the waitlist to be notified when they launch.
           </p>
         </div>
 
@@ -79,12 +98,9 @@ export default function ProductTiers() {
               }`}
             >
               <h3 className="text-xl font-semibold mb-2">{tier.name}</h3>
-              <p className="text-3xl font-bold text-primary mb-4">
-                {tier.price}
-              </p>
-              <p className="text-sm text-secondary mb-6 flex-grow">
-                {tier.description}
-              </p>
+              <p className="text-3xl font-bold text-primary mb-1">{tier.price}</p>
+              <p className="text-xs text-muted-foreground mb-4 italic">Est. pricing — subject to change</p>
+              <p className="text-sm text-secondary mb-6 flex-grow">{tier.description}</p>
 
               <ul className="space-y-2 mb-8 text-sm">
                 {tier.features.map((feature) => (
@@ -95,12 +111,16 @@ export default function ProductTiers() {
                 ))}
               </ul>
 
-              <Button
-                variant={tier.highlight ? "primary" : "secondary"}
-                className="w-full"
+              <button
+                onClick={scrollToWaitlist}
+                className={`w-full h-10 rounded-md text-sm font-semibold transition-all active:scale-[0.97] ${
+                  tier.highlight
+                    ? "bg-primary text-white hover:bg-primary/90"
+                    : "bg-transparent border border-border text-foreground hover:border-primary/50 hover:text-primary"
+                }`}
               >
                 {tier.cta}
-              </Button>
+              </button>
             </div>
           ))}
         </div>
