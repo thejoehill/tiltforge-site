@@ -1,11 +1,14 @@
+import ModelViewer from "@/components/ui/model-viewer"
+
 export default function HowItWorks() {
   const specs = [
-    "Magnetically coupled drive engages the existing tilt spool",
-    "Axial motor rotation mimics the original pull-cord action",
-    "Slip-safe magnetic interface preserves manual control",
+    "Cycloid gear reduction delivers high torque in a compact form factor",
+    "Friction clutch couples the drive to your existing tilt rod",
+    "Clutch slips safely under overload — no stripped gears, no broken blinds",
+    "Manual pull cord works normally at any time, powered or not",
     "No blind replacement or permanent modification required",
-    "Only four 3D-printed structural components",
-    "Built from standard, off-the-shelf hardware",
+    "Only a handful of 3D-printed structural components",
+    "Built from standard, off-the-shelf hardware throughout",
   ]
 
   return (
@@ -18,8 +21,9 @@ export default function HowItWorks() {
             </h2>
 
             <p className="text-lg text-secondary mb-8">
-              TiltForge works by turning the same spool your blinds already use —
-              just automatically, and without breaking anything.
+              TiltForge uses a cycloid gear reduction to drive a friction clutch that
+              turns the same tilt rod your blinds already have — automatically, quietly,
+              and without permanently modifying anything.
             </p>
 
             <div className="space-y-4 mb-10">
@@ -51,15 +55,7 @@ export default function HowItWorks() {
             </button>
           </div>
 
-          <div className="relative aspect-square rounded-lg bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-6xl mb-4">🧲⚙️</div>
-              <p className="text-secondary">Magnetic Tilt Rod Drive</p>
-              <p className="text-xs text-muted mt-2">
-                (Interactive exploded-view model)
-              </p>
-            </div>
-          </div>
+          <ModelViewer />
         </div>
       </div>
     </section>
