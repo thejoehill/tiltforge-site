@@ -37,8 +37,10 @@ export default function Hero() {
       ref={heroRef}
       className="relative w-full min-h-screen flex items-center justify-center px-6 overflow-hidden"
     >
+      {/* Base background */}
       <div className="absolute inset-0 bg-background" />
 
+      {/* Spotlight */}
       <div className="absolute inset-0 pointer-events-none">
         <div
           className="absolute rounded-full bg-primary blur-[220px] transition-opacity duration-300"
@@ -54,7 +56,9 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black" />
       </div>
 
+      {/* CONTENT */}
       <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center text-center pt-32">
+        {/* LOGO */}
         <div className="mb-24 flex justify-center w-full">
           <img
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/tiltForge%20logo%20dark-2Re7fY8aYvO7z3WUd7jbJWeu8NxIao.png"
@@ -67,26 +71,40 @@ export default function Hero() {
           />
         </div>
 
+        {/* HEADLINE */}
         <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-10 text-foreground">
           Smart Blinds.
           <br />
           <span className="text-primary">Retrofit.</span> Repairable.
         </h1>
 
-        <p className="text-lg md:text-xl text-secondary max-w-2xl mx-auto mb-16">
-          Meet TiltForge — a cycloid-drive tilt rod motor that automates your
-          existing blinds without replacing them. Manual control always preserved.
-          Standard parts. Built to be fixed, not thrown away.
+        {/* SUBHEAD */}
+        <p className="text-lg md:text-xl text-secondary max-w-2xl mx-auto mb-6">
+          Meet TiltForge — a magnetically-coupled tilt rod drive that automates your
+          existing blinds without replacing them.
+          Simple hardware. Standard parts. Built to be fixed, not thrown away.
         </p>
 
-        <div className="mb-16 flex justify-center w-full">
+        {/* ALPHA BADGE */}
+        <div className="flex items-center gap-2 mb-10 px-4 py-2 rounded-full bg-primary/10 border border-primary/25">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+          </span>
+          <span className="text-xs font-semibold uppercase tracking-widest text-primary">Alpha</span>
+          <span className="text-xs text-muted-foreground">— Not taking orders yet. Join the waitlist below.</span>
+        </div>
+
+        {/* WAITLIST FORM */}
+        <div id="waitlist" className="w-full max-w-md mx-auto mb-24">
           <WaitlistForm
-            source="hero"
-            placeholder="Enter your email for early access"
-            buttonText="Join the Beta"
+            variant="hero"
+            buttonText="Get Early Access"
+            successMessage="You're on the list. Alpha updates coming your way."
           />
         </div>
 
+        {/* SCROLL INDICATOR */}
         <div className="pb-16">
           <div className="flex flex-col items-center gap-3 animate-bounce">
             <span className="text-sm text-secondary">Scroll to explore</span>
