@@ -1,11 +1,10 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import Button from "@/components/ui/button"
+import WaitlistForm from "@/components/ui/waitlist-form"
 
 export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null)
-
   const [scrollY, setScrollY] = useState(0)
   const [mouse, setMouse] = useState({ x: 50, y: 30 })
 
@@ -69,7 +68,7 @@ export default function Hero() {
         </div>
 
         <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-10 text-foreground">
-          Smart Blinds.{" "}
+          Smart Blinds.
           <br />
           <span className="text-primary">Retrofit.</span> Repairable.
         </h1>
@@ -80,20 +79,12 @@ export default function Hero() {
           Standard parts. Built to be fixed, not thrown away.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-24">
-          <div className="relative group">
-            <div className="absolute inset-0 rounded-md bg-primary/35 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-            <Button variant="primary" className="relative z-10">
-              Join the Beta
-            </Button>
-          </div>
-
-          <div className="relative group">
-            <div className="absolute inset-0 rounded-md bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-            <Button variant="secondary" className="relative z-10">
-              See How It Works
-            </Button>
-          </div>
+        <div className="mb-16 flex justify-center w-full">
+          <WaitlistForm
+            source="hero"
+            placeholder="Enter your email for early access"
+            buttonText="Join the Beta"
+          />
         </div>
 
         <div className="pb-16">
