@@ -87,7 +87,7 @@ async function sendConfirmationEmail(to: string) {
       to,
       subject: "You're on the TiltForge early access list",
       html: confirmationHTML(),
-      text: `You're in!\n\nThanks for joining the TiltForge early access list. We're building a smarter, repairable smart blind motor — and you'll be among the first to get your hands on one.\n\nWe'll reach out personally when early access opens.\n\n— The TiltForge Team\nhttps://tiltforge.com`,
+      text: `You're in!\n\nThanks for joining the TiltForge early access list. We're building a smarter, repairable smart blind motor — and you'll be among the first to get your hands on one.\n\nWe'll reach out personally when early access opens.\n\nIn the meantime, you can see more about TiltForge here:\nhttps://tiltforge.com/early-access\n\n— The TiltForge Team`,
     }),
   })
 }
@@ -142,7 +142,7 @@ function confirmationHTML(): string {
         </tr>
         <tr>
           <td style="padding:0 40px 40px;text-align:center">
-            <a href="https://tiltforge.com" style="display:inline-block;padding:14px 36px;background:#0098ff;color:#000;font-weight:700;font-size:14px;text-decoration:none;border-radius:8px;letter-spacing:0.02em">
+            <a href="https://tiltforge.com/early-access" style="display:inline-block;padding:14px 36px;background:#0098ff;color:#000;font-weight:700;font-size:14px;text-decoration:none;border-radius:8px;letter-spacing:0.02em">
               See How It Works →
             </a>
           </td>
