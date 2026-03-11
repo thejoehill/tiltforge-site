@@ -37,37 +37,19 @@ export default function WaitlistForm({
       // 4. Optionally set NEXT_PUBLIC_BUTTONDOWN_API_KEY in your .env.local
       //    and use process.env.NEXT_PUBLIC_BUTTONDOWN_API_KEY here
       // ───────────────────────────────────────────────────────────────────────
-      const API_KEY = process.env.NEXT_PUBLIC_BUTTONDOWN_API_KEY ?? "YOUR_BUTTONDOWN_API_KEY"
-
-      const res = await fetch("https://api.buttondown.email/v1/subscribers", {
+      const res = await fetch("/api/waitlist", {
         method: "POST",
-        headers: {
-          Authorization: `Token ${API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          tags: ["early-access", "alpha"],
-          metadata: {
-            source: "tiltforge-website",
-            variant,
-          },
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, source: variant }),
       })
 
-      if (res.ok || res.status === 201) {
+      const data = await res.json()
+      if (res.ok) {
         setStatus("success")
         setEmail("")
-      } else if (res.status === 400) {
-        // Already subscribed is treated as success UX-wise
-        const body = await res.json().catch(() => ({}))
-        if (JSON.stringify(body).includes("already")) {
-          setStatus("success")
-          setEmail("")
-        } else {
-          setStatus("error")
-          setErrorMsg("Something went wrong. Try again.")
-        }
+      } else if (data.duplicate) {
+        setStatus("success")
+        setEmail("")
       } else {
         setStatus("error")
         setErrorMsg("Something went wrong. Try again.")
