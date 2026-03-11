@@ -23,6 +23,11 @@ export default function AlphaBanner() {
         <strong className="text-foreground">not taking orders yet.</strong>{" "}
         <a
           href="#waitlist"
+          onClick={(e) => {
+            e.preventDefault()
+            const el = document.getElementById("waitlist")
+            if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 64, behavior: "smooth" })
+          }}
           className="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
         >
           Join the waitlist

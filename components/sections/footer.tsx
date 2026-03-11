@@ -1,121 +1,39 @@
 export default function Footer() {
   return (
-    <footer className="w-full px-6 py-12 border-t border-border bg-background">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          <div>
-            <h3 className="font-semibold mb-4">Product</h3>
-            <ul className="space-y-2 text-secondary text-sm">
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Join the Beta
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Maker Kit
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Design Files (STLs)
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Replacement Parts
-                </a>
-              </li>
-            </ul>
-          </div>
+    <footer className="w-full border-t border-border bg-background">
+      <div className="max-w-7xl mx-auto px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
 
-          <div>
-            <h3 className="font-semibold mb-4">Company</h3>
-            <ul className="space-y-2 text-secondary text-sm">
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  About TiltForge
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Design Philosophy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Contact
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold mb-4">Resources</h3>
-            <ul className="space-y-2 text-secondary text-sm">
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Installation Guides
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Compatibility Info
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Community
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Support
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold mb-4">Legal</h3>
-            <ul className="space-y-2 text-secondary text-sm">
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Terms of Use
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Warranty & Disclaimers
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between">
-          <p className="text-secondary text-sm max-w-xl">
-            TiltForge © 2026 — Built to respect the hardware you already own.
-            Designed to be repaired, modified, and understood.
+        {/* Left — wordmark + tagline */}
+        <div>
+          <p className="text-sm font-semibold text-foreground">TiltForge</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Built to be repaired, modified, and understood.
           </p>
-
-          <div className="flex gap-6 mt-6 md:mt-0">
-            <a href="#" className="text-secondary hover:text-primary transition-colors">
-              GitHub
-            </a>
-            <a href="#" className="text-secondary hover:text-primary transition-colors">
-              Discord
-            </a>
-            <a href="#" className="text-secondary hover:text-primary transition-colors">
-              Updates
-            </a>
-          </div>
         </div>
+
+        {/* Center — alpha status */}
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
+          </span>
+          <span className="text-xs text-primary font-medium">Alpha — not taking orders yet</span>
+        </div>
+
+        {/* Right — real links only */}
+        <div className="flex items-center gap-5 text-xs text-muted-foreground">
+          <a href="https://github.com/thejoehill/tiltforge-site" target="_blank" rel="noopener noreferrer"
+            className="hover:text-foreground transition-colors">GitHub</a>
+          <a href="#waitlist"
+            onClick={(e) => {
+              e.preventDefault()
+              const el = document.getElementById("waitlist")
+              if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 64, behavior: "smooth" })
+            }}
+            className="hover:text-foreground transition-colors">Join Waitlist</a>
+          <span className="text-muted-foreground/40">© 2026</span>
+        </div>
+
       </div>
     </footer>
   )
