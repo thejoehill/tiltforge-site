@@ -80,8 +80,8 @@ export default function Hero() {
 
         {/* SUBHEAD */}
         <p className="text-lg md:text-xl text-secondary max-w-2xl mx-auto mb-6">
-          Meet TiltForge — a magnetically-coupled tilt rod drive that automates your
-          existing blinds without replacing them.
+          Meet TiltForge — a compact cycloidal-drive tilt rod motor with a friction clutch that
+          automates your existing blinds without replacing them.
           Simple hardware. Standard parts. Built to be fixed, not thrown away.
         </p>
 

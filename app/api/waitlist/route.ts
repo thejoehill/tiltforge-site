@@ -128,7 +128,7 @@ function confirmationHTML(unsubUrl: string): string {
         <tr>
           <td style="padding:40px">
             <p style="margin:0 0 20px;font-size:15px;color:#aaa;line-height:1.7">
-              TiltForge is a magnetically-coupled tilt rod drive that automates your existing blinds
+              TiltForge is a compact cycloidal-drive tilt rod motor with a friction clutch that automates your existing blinds
               without replacing them — designed to be repaired, modified, and understood.
             </p>
             <table width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0">
