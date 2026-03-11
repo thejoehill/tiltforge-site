@@ -3,28 +3,33 @@ import Icon from "@/components/ui/icon"
 export default function Solution() {
   const features = [
     {
-      title: "Harmonic Drive Torque",
-      description: "A compact 38T/36T harmonic gearbox delivers unmatched power and smoothness.",
+      title: "Cycloid Drive Mechanism",
+      description:
+        "A compact cycloid drive turns the same tilt spool your blinds already use — delivering high torque in a small package, without forcing a redesign.",
       icon: "gear",
     },
     {
-      title: "Fully Repairable",
-      description: "Every part can be replaced for $4–$12. Never throw away a motor again.",
+      title: "Manual Control Always Preserved",
+      description:
+        "A friction clutch disengages automatically when you grab the pull cord — so you're never locked out of your own blinds, even if power or software fails.",
+      icon: "hand",
+    },
+    {
+      title: "Inexpensive to Repair",
+      description:
+        "Designed around standard off-the-shelf hardware and a handful of printed parts. Replace the one thing that breaks — not the entire device.",
       icon: "wrench",
     },
     {
-      title: "Open Ecosystem",
-      description: "Works with Tuya now. Matter upgrade coming.",
+      title: "Open by Design",
+      description:
+        "Tuya support for the MVP, with future paths toward local control and broader ecosystems. No sealed boxes. No vendor lock-in.",
       icon: "network",
     },
     {
-      title: "Affordable",
-      description: "Premium performance at half the cost of big brands.",
-      icon: "tag",
-    },
-    {
-      title: "DIY or Ready-To-Install",
-      description: "Print it. Build it. Or buy it fully assembled.",
+      title: "Built for Builders",
+      description:
+        "Available assembled, as a kit, or as downloadable files. Full mechanical transparency — understand and modify every part of what you own.",
       icon: "code",
     },
   ]
@@ -33,7 +38,9 @@ export default function Solution() {
     <section className="w-full px-6 py-20 md:py-32 bg-card-bg/50">
       <div className="max-w-5xl mx-auto">
         <div className="mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-balance">A Smarter Way to Automate Your Blinds.</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-balance">
+            Automation That Respects the Hardware You Already Own.
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

@@ -1,11 +1,11 @@
 export default function HowItWorks() {
   const specs = [
-    "Magnetically coupled drive engages the existing tilt spool",
-    "Axial motor rotation mimics the original pull-cord action",
-    "Slip-safe magnetic interface preserves manual control",
+    "Cycloid drive engages the existing tilt spool with high torque efficiency",
+    "Compact motor rotation mimics the original pull-cord action",
+    "Friction clutch preserves manual control — grab the cord anytime",
     "No blind replacement or permanent modification required",
     "Only four 3D-printed structural components",
-    "Built from standard, off-the-shelf hardware",
+    "Built from standard, off-the-shelf hardware — parts cost dollars, not hundreds",
   ]
 
   return (
@@ -19,7 +19,8 @@ export default function HowItWorks() {
 
             <p className="text-lg text-secondary mb-8">
               TiltForge works by turning the same spool your blinds already use —
-              just automatically, and without breaking anything.
+              just automatically, and without breaking anything. A friction clutch
+              means you're never locked out of manual control.
             </p>
 
             <div className="space-y-4 mb-10">
@@ -35,29 +36,17 @@ export default function HowItWorks() {
 
             <button className="text-primary font-semibold flex items-center gap-2 hover:gap-3 transition-all">
               See Internal Design
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
           </div>
 
           <div className="relative aspect-square rounded-lg bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 flex items-center justify-center">
             <div className="text-center">
-              <div className="text-6xl mb-4">🧲⚙️</div>
-              <p className="text-secondary">Magnetic Tilt Rod Drive</p>
-              <p className="text-xs text-muted mt-2">
-                (Interactive exploded-view model)
-              </p>
+              <div className="text-6xl mb-4">⚙️🔧</div>
+              <p className="text-secondary">Cycloid Tilt Rod Drive</p>
+              <p className="text-xs text-muted mt-2">(Interactive exploded-view model)</p>
             </div>
           </div>
         </div>

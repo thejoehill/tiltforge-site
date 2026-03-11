@@ -16,19 +16,23 @@ export default function FAQ() {
     },
     {
       q: "What happens if something breaks?",
-      a: "You replace the failed part — not the entire device. TiltForge uses standard hardware and a small number of printed components specifically so repairs are practical.",
+      a: "You replace the failed part — not the entire device. TiltForge uses standard hardware and a small number of printed components specifically so repairs are practical. Individual parts cost a few dollars, not hundreds.",
     },
     {
       q: "Will it still work if the power or software fails?",
-      a: "Yes. The magnetic coupling allows the mechanism to safely slip, so you can continue using the pull cord manually at any time.",
+      a: "Yes. The friction clutch disengages when you grab the pull cord, so manual control is always available — no power required.",
+    },
+    {
+      q: "Why a cycloid drive?",
+      a: "A cycloid drive delivers high torque in a very compact package, with fewer points of failure than a traditional gear train. It's why industrial robots use them — we just made one cheap enough to put in a blind motor.",
     },
     {
       q: "Will it fit my blinds?",
-      a: "TiltForge is designed for standard tilt-rod blinds. If your blinds tilt using a traditional rod and cord mechanism, it will likely fit. Edge cases exist, and we’re happy to help verify compatibility.",
+      a: "TiltForge is designed for standard tilt-rod blinds. If your blinds tilt using a traditional rod and cord mechanism, it will likely fit. Edge cases exist, and we're happy to help verify compatibility.",
     },
     {
       q: "Can I print or modify the parts myself?",
-      a: "Yes. The design is intentionally maker-friendly. You can print your own parts, modify them, or build the entire device from files if that’s your preference.",
+      a: "Yes. The design is intentionally maker-friendly. You can print your own parts, modify them, or build the entire device from files if that's your preference.",
     },
   ]
 
@@ -49,23 +53,14 @@ export default function FAQ() {
                 onClick={() => setOpen(open === idx ? -1 : idx)}
                 className="w-full flex items-center justify-between p-6 text-left hover:bg-card-bg/50 transition-colors"
               >
-                <h3 className="font-semibold text-lg pr-4">
-                  {faq.q}
-                </h3>
+                <h3 className="font-semibold text-lg pr-4">{faq.q}</h3>
                 <svg
-                  className={`w-5 h-5 text-primary flex-shrink-0 transition-transform ${
-                    open === idx ? "rotate-180" : ""
-                  }`}
+                  className={`w-5 h-5 text-primary flex-shrink-0 transition-transform ${open === idx ? "rotate-180" : ""}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 14l-7-7m0 0L5 14m7-7v12"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7-7m0 0L5 14m7-7v12" />
                 </svg>
               </button>
 
