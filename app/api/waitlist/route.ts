@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
-import { addToWaitlist, readWaitlist } from "@/lib/waitlist"
+import { addToWaitlist, readWaitlist, removeFromWaitlist } from "@/lib/waitlist"
 
-const ADMIN_KEY = process.env.ADMIN_SECRET_KEY ?? "change-me-in-env"
+// Use explicit admin key in production, and a sensible default in local dev
+const ADMIN_KEY =
+  process.env.ADMIN_SECRET_KEY ||
+  (process.env.NODE_ENV !== "production" ? "tiltforge-admin-2026" : "change-me-in-env")
 const RESEND_API_KEY = process.env.RESEND_API_KEY ?? ""
 const FROM_EMAIL = process.env.FROM_EMAIL ?? "TiltForge <hello@tiltforge.com>"
 
@@ -21,19 +24,16 @@ export async function POST(req: NextRequest) {
 
     const result = await addToWaitlist(email, source)
 
-    if (result.duplicate) {
-      return NextResponse.json({ message: "You're already on the list!" }, { status: 200 })
-    }
-
-    // Fire confirmation email — non-blocking
+    // Fire confirmation email — non-blocking (even if already on the list)
     sendConfirmationEmail(email).catch((err) =>
       console.error("Confirmation email failed:", err)
     )
 
-    return NextResponse.json(
-      { message: "You're on the list! Check your inbox for a confirmation." },
-      { status: 201 }
-    )
+    const message = result.duplicate
+      ? "You're already on the list! We just re-sent your confirmation email."
+      : "You're on the list! Check your inbox for a confirmation."
+
+    return NextResponse.json({ message }, { status: 200 })
   } catch (err) {
     console.error("Waitlist POST error:", err)
     return NextResponse.json({ error: "Server error." }, { status: 500 })
@@ -48,6 +48,29 @@ export async function GET(req: NextRequest) {
   }
   const entries = await readWaitlist()
   return NextResponse.json({ count: entries.length, entries })
+}
+
+// DELETE /api/waitlist  — admin: remove an email (manual unsubscribe)
+export async function DELETE(req: NextRequest) {
+  try {
+    const body = await req.json()
+    const key = body.key as string | undefined
+    const email = (body.email as string | undefined)?.trim().toLowerCase()
+
+    if (key !== ADMIN_KEY) {
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 })
+    }
+
+    if (!email) {
+      return NextResponse.json({ error: "Email is required." }, { status: 400 })
+    }
+
+    await removeFromWaitlist(email)
+    return NextResponse.json({ ok: true })
+  } catch (err) {
+    console.error("Waitlist DELETE error:", err)
+    return NextResponse.json({ error: "Server error." }, { status: 500 })
+  }
 }
 
 async function sendConfirmationEmail(to: string) {

@@ -1,6 +1,9 @@
 import { Redis } from "@upstash/redis"
 
-const redis = Redis.fromEnv()
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL ?? "",
+  token: process.env.UPSTASH_REDIS_REST_TOKEN ?? "",
+})
 
 const WAITLIST_KEY = "tiltforge:waitlist"
 
@@ -50,6 +53,20 @@ export async function markNotified(emails: string[]) {
   const pipeline = redis.pipeline()
   pipeline.del(WAITLIST_KEY)
   for (const entry of updated) {
+    pipeline.rpush(WAITLIST_KEY, entry)
+  }
+  await pipeline.exec()
+}
+
+export async function removeFromWaitlist(email: string) {
+  const entries = await readWaitlist()
+  const normalized = email.trim().toLowerCase()
+
+  const remaining = entries.filter((e) => e.email !== normalized)
+
+  const pipeline = redis.pipeline()
+  pipeline.del(WAITLIST_KEY)
+  for (const entry of remaining) {
     pipeline.rpush(WAITLIST_KEY, entry)
   }
   await pipeline.exec()

@@ -23,6 +23,7 @@ export default function AdminWaitlistPage() {
   const [sending, setSending] = useState(false)
   const [sendResult, setSendResult] = useState("")
   const [sendError, setSendError] = useState(false)
+  const [deletingEmail, setDeletingEmail] = useState("")
 
   async function fetchList(k?: string) {
     const useKey = k ?? key
@@ -69,6 +70,29 @@ export default function AdminWaitlistPage() {
       setSendResult("Network error — try again.")
     }
     setSending(false)
+  }
+
+  async function deleteEntry(email: string) {
+    if (!window.confirm(`Remove ${email} from the waitlist?`)) return
+
+    try {
+      setDeletingEmail(email)
+      const res = await fetch("/api/waitlist", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key, email }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        alert(data.error ?? "Failed to remove entry.")
+        return
+      }
+      await fetchList()
+    } catch {
+      alert("Network error — try again.")
+    } finally {
+      setDeletingEmail("")
+    }
   }
 
   const unnotifiedCount = entries.filter((e) => !e.notified).length
@@ -127,6 +151,7 @@ export default function AdminWaitlistPage() {
                   <th className="text-left px-5 py-3">Source</th>
                   <th className="text-left px-5 py-3">Joined</th>
                   <th className="text-left px-5 py-3">Notified</th>
+                  <th className="text-right px-5 py-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -140,10 +165,19 @@ export default function AdminWaitlistPage() {
                         ? <span className="text-primary text-xs font-medium">✓ Yes</span>
                         : <span className="text-secondary text-xs">No</span>}
                     </td>
+                    <td className="px-5 py-3 text-right">
+                      <button
+                        onClick={() => deleteEntry(e.email)}
+                        disabled={!!deletingEmail}
+                        className="text-xs text-red-400 border border-red-400/40 px-3 py-1.5 rounded-lg hover:bg-red-500/10 transition disabled:opacity-40"
+                      >
+                        {deletingEmail === e.email ? "Removing…" : "Remove"}
+                      </button>
+                    </td>
                   </tr>
                 ))}
                 {entries.length === 0 && (
-                  <tr><td colSpan={4} className="px-5 py-8 text-center text-secondary">No entries yet.</td></tr>
+                  <tr><td colSpan={5} className="px-5 py-8 text-center text-secondary">No entries yet.</td></tr>
                 )}
               </tbody>
             </table>
