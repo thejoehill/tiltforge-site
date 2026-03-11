@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 
 interface WaitlistEntry {
   email: string
@@ -16,22 +16,23 @@ export default function AdminWaitlistPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  // Email blast state
-  const [subject, setSubject] = useState("")
-  const [body, setBody] = useState("")
+  const [subject, setSubject] = useState("TiltForge Early Access is Open")
+  const [body, setBody] = useState(`Hey,\n\nWe're thrilled to open TiltForge early access to our first wave of testers...\n\nHead here to claim your spot: https://tiltforge.com/early-access\n\nThanks for believing in this early.\n— The TiltForge Team`)
   const [onlyUnnotified, setOnlyUnnotified] = useState(true)
   const [testEmail, setTestEmail] = useState("")
   const [sending, setSending] = useState(false)
   const [sendResult, setSendResult] = useState("")
+  const [sendError, setSendError] = useState(false)
 
-  async function fetchList() {
+  async function fetchList(k?: string) {
+    const useKey = k ?? key
     setLoading(true)
     setError("")
     try {
-      const res = await fetch(`/api/waitlist?key=${encodeURIComponent(key)}`)
+      const res = await fetch(`/api/waitlist?key=${encodeURIComponent(useKey)}`)
       if (!res.ok) { setError("Invalid key or server error."); setLoading(false); return }
       const data = await res.json()
-      setEntries(data.entries)
+      setEntries(data.entries ?? [])
       setAuthed(true)
     } catch {
       setError("Failed to connect.")
@@ -42,6 +43,7 @@ export default function AdminWaitlistPage() {
   async function sendBlast(isTest: boolean) {
     setSending(true)
     setSendResult("")
+    setSendError(false)
     try {
       const res = await fetch("/api/waitlist/send", {
         method: "POST",
@@ -55,10 +57,16 @@ export default function AdminWaitlistPage() {
         }),
       })
       const data = await res.json()
-      setSendResult(data.message ?? data.error ?? "Done.")
-      if (!isTest) await fetchList() // refresh notified flags
+      if (!res.ok) {
+        setSendError(true)
+        setSendResult(data.error ?? "Send failed.")
+      } else {
+        setSendResult(data.message ?? "Done.")
+        if (!isTest) await fetchList()
+      }
     } catch {
-      setSendResult("Send failed.")
+      setSendError(true)
+      setSendResult("Network error — try again.")
     }
     setSending(false)
   }
@@ -80,8 +88,8 @@ export default function AdminWaitlistPage() {
           />
           {error && <p className="text-red-400 text-xs mb-3">{error}</p>}
           <button
-            onClick={fetchList}
-            disabled={loading}
+            onClick={() => fetchList()}
+            disabled={loading || !key}
             className="w-full py-3 rounded-lg bg-primary text-black font-semibold text-sm hover:bg-primary/90 transition disabled:opacity-60"
           >
             {loading ? "Checking…" : "Login"}
@@ -95,7 +103,6 @@ export default function AdminWaitlistPage() {
     <div className="min-h-screen bg-background text-foreground p-6 md:p-10">
       <div className="max-w-4xl mx-auto space-y-10">
 
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Waitlist Admin</h1>
@@ -104,14 +111,13 @@ export default function AdminWaitlistPage() {
             </p>
           </div>
           <button
-            onClick={fetchList}
+            onClick={() => fetchList()}
             className="text-xs text-primary border border-primary/30 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition"
           >
             Refresh
           </button>
         </div>
 
-        {/* Entries table */}
         <div className="bg-card-bg border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -144,7 +150,6 @@ export default function AdminWaitlistPage() {
           </div>
         </div>
 
-        {/* Email blast composer */}
         <div className="bg-card-bg border border-border rounded-xl p-6 space-y-4">
           <h2 className="text-lg font-semibold">Send Early Access Email</h2>
 
@@ -160,29 +165,26 @@ export default function AdminWaitlistPage() {
           </div>
 
           <div>
-            <label className="block text-xs text-secondary mb-1.5 uppercase tracking-wide">Body (plain text / newlines → paragraphs)</label>
+            <label className="block text-xs text-secondary mb-1.5 uppercase tracking-wide">Body</label>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
               rows={8}
-              placeholder={`Hey,\n\nWe're thrilled to open TiltForge early access to our first wave of testers...\n\nHead here to claim your spot: https://tiltforge.com/early-access\n\nThanks for believing in this early.\n— The TiltForge Team`}
               className="w-full px-4 py-3 rounded-lg bg-background border border-border text-foreground text-sm font-mono focus:outline-none focus:border-primary/60 resize-y"
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-6">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={onlyUnnotified}
-                onChange={(e) => setOnlyUnnotified(e.target.checked)}
-                className="accent-primary w-4 h-4"
-              />
-              <span className="text-sm text-secondary">Only send to un-notified ({unnotifiedCount})</span>
-            </label>
-          </div>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={onlyUnnotified}
+              onChange={(e) => setOnlyUnnotified(e.target.checked)}
+              className="accent-primary w-4 h-4"
+            />
+            <span className="text-sm text-secondary">Only send to un-notified ({unnotifiedCount})</span>
+          </label>
 
-          {/* Test send */}
+          {/* Test send row */}
           <div className="flex gap-3 items-center">
             <input
               type="email"
@@ -193,21 +195,23 @@ export default function AdminWaitlistPage() {
             />
             <button
               onClick={() => sendBlast(true)}
-              disabled={sending || !testEmail || !subject || !body}
-              className="px-4 py-2.5 rounded-lg border border-primary/40 text-primary text-sm font-medium hover:bg-primary/10 transition disabled:opacity-40"
+              disabled={sending || !testEmail.trim() || !subject.trim() || !body.trim()}
+              className="px-5 py-2.5 rounded-lg bg-primary/20 border border-primary/40 text-primary text-sm font-semibold hover:bg-primary/30 transition disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
             >
-              Send Test
+              {sending ? "Sending…" : "Send Test"}
             </button>
           </div>
 
           {sendResult && (
-            <p className="text-sm text-primary bg-primary/10 border border-primary/20 rounded-lg px-4 py-3">{sendResult}</p>
+            <p className={`text-sm rounded-lg px-4 py-3 border ${sendError ? "text-red-400 bg-red-400/10 border-red-400/20" : "text-primary bg-primary/10 border-primary/20"}`}>
+              {sendResult}
+            </p>
           )}
 
           <button
             onClick={() => sendBlast(false)}
-            disabled={sending || !subject || !body}
-            className="w-full py-3 rounded-lg bg-primary text-black font-semibold text-sm hover:bg-primary/90 transition disabled:opacity-40"
+            disabled={sending || !subject.trim() || !body.trim()}
+            className="w-full py-3 rounded-lg bg-primary text-black font-semibold text-sm hover:bg-primary/90 transition disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {sending ? "Sending…" : `Blast to ${onlyUnnotified ? unnotifiedCount : entries.length} recipients`}
           </button>
