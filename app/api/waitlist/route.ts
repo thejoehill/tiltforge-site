@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { addToWaitlist, readWaitlist, removeFromWaitlist } from "@/lib/waitlist"
+import { makeUnsubToken } from "@/lib/waitlist-unsubscribe"
 
 // Use explicit admin key in production, and a sensible default in local dev
 const ADMIN_KEY =
@@ -75,6 +76,10 @@ export async function DELETE(req: NextRequest) {
 
 async function sendConfirmationEmail(to: string) {
   if (!RESEND_API_KEY) return
+  const token = makeUnsubToken(to)
+  const unsubUrl = `https://tiltforge.com/api/waitlist/unsubscribe?token=${encodeURIComponent(
+    token
+  )}`
 
   await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -86,19 +91,19 @@ async function sendConfirmationEmail(to: string) {
       from: FROM_EMAIL,
       to,
       subject: "You're on the TiltForge early access list",
-      html: confirmationHTML(),
+      html: confirmationHTML(unsubUrl),
       text: `You're in!\n
 Thanks for joining the TiltForge early access list. We're building a smarter, repairable smart blind motor — and you'll be among the first to get your hands on one.\n
 We'll reach out personally when early access opens.\n
 In the meantime, you can see more about TiltForge here:
 https://tiltforge.com/early-access\n
-If you'd like to unsubscribe from the early access list, just reply to this email with "unsubscribe" or email hello@tiltforge.com.\n
+If you'd like to unsubscribe from the early access list, you can click this link:\n${unsubUrl}\n
 — The TiltForge Team`,
     }),
   })
 }
 
-function confirmationHTML(): string {
+function confirmationHTML(unsubUrl: string): string {
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -158,8 +163,8 @@ function confirmationHTML(): string {
             You're receiving this because you joined the TiltForge early access list.<br/>
             TiltForge © 2026 — Built to be repaired, not replaced.<br/>
             <span style="font-size:11px;color:#555;">
-              To unsubscribe, reply to this email with "unsubscribe" or email
-              <a href="mailto:hello@tiltforge.com?subject=Unsubscribe%20from%20TiltForge%20early%20access" style="color:#888;text-decoration:underline;"> hello@tiltforge.com</a>.
+              Don&apos;t want future emails?&nbsp;
+              <a href="${unsubUrl}" style="color:#888;text-decoration:underline;">Unsubscribe instantly</a>.
             </span>
           </td>
         </tr>
