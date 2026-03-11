@@ -42,15 +42,27 @@ export default function ModelViewer() {
   const activeRef  = useRef<number | null>(null)
   const focusRef   = useRef<number | null>(null)
 
-  const [mode,    setMode]    = useState<Mode>("assembled")
-  const [active,  setActive]  = useState<number | null>(null)
-  const [focused, setFocused] = useState<number | null>(null)
-  const [pct,     setPct]     = useState(0)
-  const [ready,   setReady]   = useState(false)
+  const [mode,     setMode]     = useState<Mode>("assembled")
+  const [active,   setActive]   = useState<number | null>(null)
+  const [focused,  setFocused]  = useState<number | null>(null)
+  const [pct,      setPct]      = useState(0)
+  const [ready,    setReady]    = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
-  useEffect(() => { modeRef.current  = mode    }, [mode])
-  useEffect(() => { activeRef.current = active }, [active])
-  useEffect(() => { focusRef.current  = focused }, [focused])
+  // Track mobile breakpoint
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+
+  const isMobileRef = useRef(false)
+
+  useEffect(() => { modeRef.current   = mode    }, [mode])
+  useEffect(() => { activeRef.current  = active  }, [active])
+  useEffect(() => { focusRef.current   = focused }, [focused])
+  useEffect(() => { isMobileRef.current = isMobile }, [isMobile])
 
   useEffect(() => {
     if (!mountRef.current) return
@@ -68,7 +80,8 @@ export default function ModelViewer() {
       if (dead) return
       const T = (window as any).THREE
 
-      const W = mountRef.current!.clientWidth, H = 620
+      const W = mountRef.current!.clientWidth
+      const H = window.innerWidth < 768 ? 340 : 620
       const renderer = new T.WebGLRenderer({ antialias: true, alpha: true })
       renderer.setSize(W, H)
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -215,25 +228,25 @@ export default function ModelViewer() {
         s.meshes.forEach((mesh: any, i: number) => {
           const isActive = act === i
           const dist     = act !== null ? Math.abs(i - act) : 999
+          const mob      = isMobileRef.current
 
           // X position (exploded spread)
           s.curX[i] += (PARTS[i].explX - s.curX[i]) * 0.07
           mesh.position.x = s.curX[i]
 
-          // Y lift — active part rises 1.8 units above the line
-          const tY = isExploded && isActive ? 1.8 : 0
+          // Y lift — reduced on mobile so part stays in frame
+          const tY = isExploded && isActive ? (mob ? 0.9 : 1.8) : 0
           s.curY[i] += (tY - s.curY[i]) * 0.08
           mesh.position.y = s.curY[i]
 
-          // Scale — active grows, immediate neighbours shrink slightly, rest normal
+          // Scale — active grows, neighbours shrink, reduced on mobile
           const tScale = isExploded
-            ? (dist === 0 ? 1.45 : dist === 1 ? 0.82 : 1.0)
+            ? (dist === 0 ? (mob ? 1.2 : 1.45) : dist === 1 ? 0.82 : 1.0)
             : 1.0
           s.curScale[i] += (tScale - s.curScale[i]) * 0.1
           mesh.scale.setScalar(s.curScale[i])
 
-          // Spin — active part spins fast, decelerates smoothly back to 0
-          // When inactive, also nudge rotation back toward 0 so it's clean next hover
+          // Spin — same on all devices
           const tSpin = isExploded && isActive ? 0.07 : 0
           s.curSpinY[i] += (tSpin - s.curSpinY[i]) * 0.12
           if (isExploded && isActive) {
@@ -256,8 +269,9 @@ export default function ModelViewer() {
       const onResize = () => {
         if (!mountRef.current || !stateRef.current) return
         const W2 = mountRef.current.clientWidth
-        stateRef.current.renderer.setSize(W2, 620)
-        stateRef.current.camera.aspect = W2 / 620
+        const H2 = window.innerWidth < 768 ? 340 : 620
+        stateRef.current.renderer.setSize(W2, H2)
+        stateRef.current.camera.aspect = W2 / H2
         stateRef.current.camera.updateProjectionMatrix()
       }
       window.addEventListener("resize", onResize)
@@ -277,12 +291,17 @@ export default function ModelViewer() {
     if (stateRef.current) { stateRef.current.orb.tLook.set(0,0,0); stateRef.current.orb.tR = 8 }
   }
 
-  return (
-    <div className="w-full select-none rounded-xl overflow-hidden border border-border bg-[#080c10]" style={{ height: 620 }}>
-      <div className="flex h-full">
+  const canvasH = isMobile ? 340 : 620
 
-        {/* ── 3D canvas — takes remaining width ── */}
-        <div className="relative flex-1 min-w-0">
+  return (
+    <div className="w-full select-none rounded-xl overflow-hidden border border-border bg-[#080c10]"
+      style={{ height: isMobile ? "auto" : 620 }}>
+
+      {/* ── Main row: canvas + desktop side panel ── */}
+      <div className={`flex ${isMobile ? "flex-col" : "h-full"}`}>
+
+        {/* 3D canvas */}
+        <div className="relative flex-1 min-w-0" style={{ height: canvasH }}>
 
           {/* Loading overlay */}
           {!ready && (
@@ -295,94 +314,135 @@ export default function ModelViewer() {
             </div>
           )}
 
-          <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
+          <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing touch-none" />
 
           {/* Hint */}
           {ready && active === null && (
-            <p className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 pointer-events-none text-xs text-white/20 tracking-wide whitespace-nowrap">
-              {mode === "exploded" ? "Hover or click a part to inspect" : "Drag · Scroll to zoom"}
+            <p className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none text-xs text-white/20 tracking-wide whitespace-nowrap">
+              {mode === "exploded"
+                ? (isMobile ? "Tap a part to inspect" : "Hover or click a part to inspect")
+                : "Drag · Pinch to zoom"}
             </p>
           )}
 
           {/* Mode buttons */}
-          <div className="absolute top-4 left-4 flex gap-2 z-10">
+          <div className="absolute top-3 left-3 flex gap-1.5 z-10">
             {(["assembled","exploded","rotating"] as Mode[]).map(m => (
               <button key={m} onClick={() => { setMode(m); reset() }}
-                className={`px-3 py-1.5 rounded text-xs font-bold uppercase tracking-widest transition-all ${
+                className={`px-2.5 py-1 rounded text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all ${
                   mode === m ? "bg-primary text-white shadow-lg shadow-primary/30"
                              : "bg-black/70 border border-white/10 text-white/40 hover:border-primary/40 hover:text-white/80"
                 }`}>{m}</button>
             ))}
           </div>
+
+          {/* Mobile: active part detail overlaid at bottom of canvas */}
+          {isMobile && active !== null && (
+            <div className="absolute bottom-8 left-3 right-3 z-10 pointer-events-none">
+              <div className="bg-black/80 border border-primary/20 rounded-lg px-3 py-2 backdrop-blur-sm">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ background: PARTS[active].color, opacity: PARTS[active].ref ? 0.5 : 1 }}
+                  />
+                  <p className="text-xs font-semibold text-primary truncate">{PARTS[active].label}</p>
+                  {PARTS[active].ref && <span className="text-[9px] border border-white/15 text-white/30 px-1 py-0.5 rounded ml-auto">N/A</span>}
+                </div>
+                <p className="text-[11px] text-white/50 leading-snug">{PARTS[active].desc}</p>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* ── Right panel — docked, always visible ── */}
-        <div className="w-56 flex-shrink-0 border-l border-white/5 flex flex-col bg-[#080c10]">
-
-          {/* Header */}
-          <div className="px-4 pt-4 pb-3 border-b border-white/5">
-            <p className="text-[10px] text-white/25 font-mono tracking-widest uppercase">Components</p>
+        {/* ── Desktop: side panel ── */}
+        {!isMobile && (
+          <div className="w-56 flex-shrink-0 border-l border-white/5 flex flex-col bg-[#080c10]">
+            <div className="px-4 pt-4 pb-3 border-b border-white/5">
+              <p className="text-[10px] text-white/25 font-mono tracking-widest uppercase">Components</p>
+            </div>
+            <div className="flex-1 overflow-y-auto py-2 px-2">
+              {PARTS.map((p, i) => (
+                <button key={i}
+                  onMouseEnter={() => { if (!focused) setActive(i) }}
+                  onMouseLeave={() => { if (!focused) setActive(null) }}
+                  onClick={() => {
+                    const nf = focused === i ? null : i
+                    setFocused(nf); setActive(nf)
+                    if (stateRef.current) {
+                      stateRef.current.orb.tLook.set(nf !== null ? (mode === "exploded" ? PARTS[i].explX : toX(PARTS[i].acx)) : 0, 0, 0)
+                      stateRef.current.orb.tR = nf !== null ? 3.5 : 8
+                    }
+                  }}
+                  className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-2 mb-0.5 transition-all ${
+                    active === i ? "bg-primary/15 text-primary"
+                      : p.ref    ? "text-white/20 hover:text-white/35"
+                      : "text-white/45 hover:text-white/75"
+                  }`}
+                >
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: p.color, opacity: p.ref ? 0.4 : 1 }} />
+                  <span className="truncate">{p.label}</span>
+                  {p.ref && <span className="text-[9px] text-white/15 ml-auto flex-shrink-0">—</span>}
+                </button>
+              ))}
+            </div>
+            {/* Detail slides up */}
+            <div className="border-t border-white/5 overflow-hidden transition-all duration-300"
+              style={{ maxHeight: active !== null ? 200 : 0 }}>
+              {active !== null && (
+                <div className="px-4 py-3">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                      style={{ background: PARTS[active].color, opacity: PARTS[active].ref ? 0.5 : 1 }} />
+                    <p className="text-xs font-semibold text-primary leading-tight truncate">{PARTS[active].label}</p>
+                    {PARTS[active].ref && <span className="text-[9px] border border-white/15 text-white/30 px-1 py-0.5 rounded ml-auto flex-shrink-0">N/A</span>}
+                  </div>
+                  <p className="text-[11px] text-white/50 leading-relaxed">{PARTS[active].desc}</p>
+                  {focused !== null && (
+                    <button onClick={reset} className="mt-2 text-[10px] text-white/25 hover:text-primary transition-colors">
+                      ← full assembly
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
+        )}
+      </div>
 
-          {/* Part list — scrollable */}
-          <div className="flex-1 overflow-y-auto py-2 px-2">
+      {/* ── Mobile: horizontal part strip below canvas ── */}
+      {isMobile && (
+        <div className="border-t border-white/5 bg-[#080c10]">
+          <div className="flex overflow-x-auto px-3 py-2 gap-1.5" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
             {PARTS.map((p, i) => (
               <button key={i}
-                onMouseEnter={() => { if (!focused) setActive(i) }}
-                onMouseLeave={() => { if (!focused) setActive(null) }}
+                onTouchStart={() => {
+                  const nf = focused === i ? null : i
+                  setFocused(nf); setActive(nf)
+                  if (stateRef.current) {
+                    stateRef.current.orb.tLook.set(nf !== null ? (mode === "exploded" ? PARTS[i].explX : toX(PARTS[i].acx)) : 0, 0, 0)
+                    stateRef.current.orb.tR = nf !== null ? 4.5 : 8
+                  }
+                }}
                 onClick={() => {
                   const nf = focused === i ? null : i
                   setFocused(nf); setActive(nf)
                   if (stateRef.current) {
                     stateRef.current.orb.tLook.set(nf !== null ? (mode === "exploded" ? PARTS[i].explX : toX(PARTS[i].acx)) : 0, 0, 0)
-                    stateRef.current.orb.tR = nf !== null ? 3.5 : 8
+                    stateRef.current.orb.tR = nf !== null ? 4.5 : 8
                   }
                 }}
-                className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-2 mb-0.5 transition-all ${
-                  active === i
-                    ? "bg-primary/15 text-primary"
-                    : p.ref
-                      ? "text-white/20 hover:text-white/35"
-                      : "text-white/45 hover:text-white/75"
+                className={`flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] whitespace-nowrap transition-all ${
+                  active === i ? "bg-primary/20 text-primary border border-primary/30"
+                    : p.ref    ? "text-white/20 border border-transparent"
+                    : "text-white/40 border border-transparent"
                 }`}
               >
-                <span className="w-2 h-2 rounded-full flex-shrink-0"
-                  style={{ background: p.color, opacity: p.ref ? 0.4 : 1 }}
-                />
-                <span className="truncate">{p.label}</span>
-                {p.ref && <span className="text-[9px] text-white/15 ml-auto flex-shrink-0">—</span>}
+                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: p.color, opacity: p.ref ? 0.4 : 1 }} />
+                {p.label}
               </button>
             ))}
           </div>
-
-          {/* Detail panel — slides in from bottom when part selected */}
-          <div
-            className="border-t border-white/5 overflow-hidden transition-all duration-300"
-            style={{ maxHeight: active !== null ? 200 : 0 }}
-          >
-            {active !== null && (
-              <div className="px-4 py-3">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                    style={{ background: PARTS[active].color, opacity: PARTS[active].ref ? 0.5 : 1 }}
-                  />
-                  <p className="text-xs font-semibold text-primary leading-tight truncate">{PARTS[active].label}</p>
-                  {PARTS[active].ref && (
-                    <span className="text-[9px] border border-white/15 text-white/30 px-1 py-0.5 rounded ml-auto flex-shrink-0">N/A</span>
-                  )}
-                </div>
-                <p className="text-[11px] text-white/50 leading-relaxed">{PARTS[active].desc}</p>
-                {focused !== null && (
-                  <button onClick={reset} className="mt-2 text-[10px] text-white/25 hover:text-primary transition-colors">
-                    ← full assembly
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-
         </div>
-      </div>
+      )}
     </div>
   )
 }
