@@ -2,7 +2,7 @@ import WaitlistForm from "@/components/ui/waitlist-form"
 
 export default function FinalCTA() {
   return (
-    <section id="final-cta" className="w-full px-6 py-20 md:py-32 bg-gradient-to-b from-background to-card-bg/50">
+    <section className="w-full px-6 py-20 md:py-32 bg-gradient-to-b from-background to-card-bg/50">
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="text-4xl md:text-6xl font-bold text-balance mb-8">
           Automate Your Blinds — Without Replacing Them.

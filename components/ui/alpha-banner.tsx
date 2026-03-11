@@ -22,10 +22,10 @@ export default function AlphaBanner() {
         TiltForge is in active development —{" "}
         <strong className="text-foreground">not taking orders yet.</strong>{" "}
         <a
-          href="#final-cta"
+          href="#waitlist"
           onClick={(e) => {
             e.preventDefault()
-            const el = document.getElementById("final-cta")
+            const el = document.getElementById("waitlist")
             if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 64, behavior: "smooth" })
           }}
           className="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
